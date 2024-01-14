@@ -1,3 +1,6 @@
 {
-    "dotnet.defaultSolution": "dotnet-graphql-api.sln"
+    "dotnet.defaultSolution": "dotnet-graphql-api.sln",
+    "cSpell.words": [
+        "dotnet"
+    ]
 }
