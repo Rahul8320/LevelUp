@@ -1,42 +1,43 @@
 using dotnet_graphql_api.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace dotnet_graphql_api.Data.Repositories;
 
-public class CoursesRepository
+public class CoursesRepository(CourseDbContext context)
 {
-    private readonly List<Course> _courses = [];
-    private int _lastIndex = 0;
+
+    private readonly CourseDbContext _context = context;
 
     public List<Course> GetAllCourses()
     {
-        return _courses;
+        return [.. _context.Courses];
     }
 
-    public Course? GetCourseById(int id)
+    public Course? GetCourseById(Guid id)
     {
-        return _courses.FirstOrDefault(item => item.Id == id);
+        return _context.Courses.FirstOrDefault(item => item.Id == id);
     }
 
     public Course AddCourse(AddCourseDto courseDto)
     {
-        _lastIndex++;
         var course = new Course
         {
-            Id = _lastIndex,
+            Id = Guid.NewGuid(),
             Name = courseDto.Name,
             Description = courseDto.Description,
             Review  = courseDto.Review,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
-        _courses.Add(course);
+        _context.Courses.Add(course);
+        _context.SaveChanges();
 
         return course;
     }
 
-    public Course? UpdateCourse(int id, AddCourseDto courseDto)
+    public Course? UpdateCourse(Guid id, AddCourseDto courseDto)
     {
-        var existingCourse = _courses.FirstOrDefault(item => item.Id == id);
+        var existingCourse = _context.Courses.FirstOrDefault(item => item.Id == id);
 
         if(existingCourse == null)
         {
@@ -48,11 +49,22 @@ public class CoursesRepository
         existingCourse.Review = courseDto.Review;
         existingCourse.UpdatedAt = DateTime.UtcNow;
 
+        _context.Entry(existingCourse).State = EntityState.Modified;
+        _context.SaveChanges();
+
         return existingCourse;
     }
 
-    public bool DeleteCourse(int id)
+    public bool DeleteCourse(Guid id)
     {
-        return _courses.RemoveAll(item => item.Id == id) != 0;
+        var course = _context.Courses.Find(id);
+        if(course == null)
+        {
+            return false;
+        }
+        _context.Courses.Remove(course);
+        _context.SaveChanges();
+
+        return true;
     }
 }

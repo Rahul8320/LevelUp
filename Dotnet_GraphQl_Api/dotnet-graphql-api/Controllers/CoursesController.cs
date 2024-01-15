@@ -26,14 +26,19 @@ public class CoursesController(CoursesRepository coursesRepository) : Controller
     }
 
     [HttpGet]
-    [Route("/{id}")]
-    public IActionResult GetCourse(string id)
+    [Route("{id}")]
+    public IActionResult GetCourse(Guid id)
     {
         try
         {
-            var allCourses = _repository.GetCourseById(int.Parse(id));
+            var course = _repository.GetCourseById(id);
+
+            if(course == null)
+            {
+                return NotFound();
+            }
     
-            return Ok(allCourses);
+            return Ok(course);
         }
         catch (Exception ex)
         {
@@ -62,8 +67,8 @@ public class CoursesController(CoursesRepository coursesRepository) : Controller
     }
 
     [HttpPut]
-    [Route("/{id}")]
-    public IActionResult UpdateCourse(string id, [FromBody] AddCourseDto courseDto)
+    [Route("{id}")]
+    public IActionResult UpdateCourse(Guid id, [FromBody] AddCourseDto courseDto)
     {
         try
         {
@@ -72,7 +77,12 @@ public class CoursesController(CoursesRepository coursesRepository) : Controller
                 return BadRequest(ModelState);
             }
 
-            var updatedCourse = _repository.UpdateCourse(int.Parse(id), courseDto);
+            var updatedCourse = _repository.UpdateCourse(id, courseDto);
+
+            if(updatedCourse == null)
+            {
+                return NotFound();
+            }
 
             return Ok(updatedCourse);
         }
@@ -84,18 +94,18 @@ public class CoursesController(CoursesRepository coursesRepository) : Controller
 
     [HttpDelete]
     [Route("{id}")]
-    public IActionResult DeleteCourse(string id)
+    public IActionResult DeleteCourse(Guid id)
     {
         try
         {
-            var isDeleted = _repository.DeleteCourse(int.Parse(id));
+            var isDeleted = _repository.DeleteCourse(id);
 
             if(isDeleted)
             {
-                return Ok(isDeleted);
+                return Ok("Course is deleted!");
             }
 
-            return BadRequest("Course not Deleted!");
+            return NotFound();
         }
         catch (Exception ex)
         {
