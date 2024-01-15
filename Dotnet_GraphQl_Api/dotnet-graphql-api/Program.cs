@@ -1,9 +1,6 @@
 using dotnet_graphql_api.Data;
 using dotnet_graphql_api.Data.Repositories;
 using dotnet_graphql_api.GraphQL;
-using dotnet_graphql_api.GraphQL.Queries;
-using dotnet_graphql_api.GraphQL.Types;
-using GraphQL.Types;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,11 +16,7 @@ builder.Services.AddScoped<CoursesRepository>();
 builder.Services.AddScoped<CourseQuery>();
 
 // GraphQl
-builder.Services.AddSingleton<CourseType>();
-builder.Services.AddSingleton<CourseQuery>();
-builder.Services.AddSingleton<ISchema, AppSchema>();
-
-builder.Services.AddGraphQL();
+builder.Services.AddGraphQLServer().AddQueryType<CourseQuery>();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -42,8 +35,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // GraphQL
-app.UseGraphQL<ISchema>();
-app.UseGraphQLGraphiQL("/ui/graphql");
+app.MapGraphQL();
 
 app.MapControllers();
 
