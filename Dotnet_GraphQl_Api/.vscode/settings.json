@@ -2,5 +2,8 @@
     "dotnet.defaultSolution": "dotnet-graphql-api.sln",
     "cSpell.words": [
         "dotnet"
+    ],
+    "cSpell.ignoreWords": [
+        "Graphi"
     ]
 }
