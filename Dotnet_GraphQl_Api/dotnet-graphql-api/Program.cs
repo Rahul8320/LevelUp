@@ -39,4 +39,7 @@ app.MapGraphQL();
 
 app.MapControllers();
 
+// seed data to db
+SeedData.PopulateDb(app);
+
 app.Run();
