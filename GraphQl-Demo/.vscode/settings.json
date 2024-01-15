@@ -1,3 +1,9 @@
 {
-    "dotnet.defaultSolution": "..sln"
+    "dotnet.defaultSolution": "..sln",
+    "cSpell.words": [
+        "Rahul"
+    ],
+    "cSpell.ignoreWords": [
+        "Telusko"
+    ]
 }
