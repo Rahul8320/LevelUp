@@ -9,8 +9,8 @@ public class RegisterUser
 
     [EmailAddress]
     [Required(ErrorMessage = "Email is required")]
-    public string? Email { get; set; }
+    public string Email { get; set; } = default!;
 
     [Required(ErrorMessage = "Password is required")]
-    public string? Password { get; set; }
+    public string Password { get; set; } = default!;
 }
