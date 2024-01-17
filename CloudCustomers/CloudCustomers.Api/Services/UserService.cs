@@ -2,15 +2,14 @@
 
 namespace CloudCustomers.Api;
 
-public class UserService : IUserService
+public class UserService(HttpClient httpClient) : IUserService
 {
-    public UserService()
-    {
+    private readonly HttpClient _httpClient = httpClient;
 
-    }
-
-    public Task<List<User>> GetAllUsers()
+    public async Task<List<User>> GetAllUsers()
     {
-        throw new NotImplementedException();
+        var userResponse = await _httpClient.GetAsync("http://youtube.com/");
+
+        return [];
     }
 }

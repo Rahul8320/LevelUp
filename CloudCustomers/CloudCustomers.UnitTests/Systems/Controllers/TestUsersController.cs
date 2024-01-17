@@ -1,6 +1,7 @@
 using CloudCustomers.Api;
 using CloudCustomers.Api.Controllers;
 using CloudCustomers.Api.Models;
+using CloudCustomers.UnitTests.Fixtures;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -16,18 +17,7 @@ public class TestUsersController
         var mockUserService = new Mock<IUserService>();
         mockUserService
             .Setup(service => service.GetAllUsers())
-            .ReturnsAsync([
-                new(){
-                    Id = 1,
-                    Name = "Test User",
-                    Address = new(){
-                        Street = "Test Street",
-                        City = "Test City",
-                        ZipCode = 000000,
-                    },
-                    Email = "test@testingteam.com"
-                }
-            ]);
+            .ReturnsAsync(UsersFixtures.GetTestUsers());
 
         var sut = new UsersController(mockUserService.Object);
 
@@ -64,18 +54,7 @@ public class TestUsersController
         var mockUserService = new Mock<IUserService>();
         mockUserService
             .Setup(service => service.GetAllUsers())
-            .ReturnsAsync([
-                new(){
-                    Id = 1,
-                    Name = "Test User",
-                    Address = new(){
-                        Street = "Test Street",
-                        City = "Test City",
-                        ZipCode = 000000,
-                    },
-                    Email = "test@testingteam.com"
-                }
-            ]);
+            .ReturnsAsync(UsersFixtures.GetTestUsers());
 
         var sut = new UsersController(mockUserService.Object);
 
@@ -90,7 +69,7 @@ public class TestUsersController
     }
 
     [Fact]
-    public async Task GetUsers_OnUsersNotFound_Returns400()
+    public async Task GetUsers_OnUsersNotFound_Returns404()
     {
         // Arrange
         var mockUserService = new Mock<IUserService>();
