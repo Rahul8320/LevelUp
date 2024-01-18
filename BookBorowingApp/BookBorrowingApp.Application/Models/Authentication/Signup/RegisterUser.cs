@@ -4,6 +4,9 @@ namespace BookBorrowingApp.Application.Models.Authentication.Signup;
 
 public class RegisterUser
 {
+    [Required(ErrorMessage = "Name is required")]
+    public string Name { get; set; } = default!;
+
     [Required(ErrorMessage = "UserName is required")]
     public string UserName { get; set; } = default!;
 

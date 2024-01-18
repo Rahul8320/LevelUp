@@ -13,12 +13,12 @@ namespace BookBorrowingApp.Application.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 public class AuthenticationController(
-    UserManager<IdentityUser> userManager,
+    UserManager<ApplicationUser> userManager,
     RoleManager<IdentityRole> roleManager,
     IConfiguration configuration) : ControllerBase
 {
     private readonly RoleManager<IdentityRole> _roleManager = roleManager;
-    private readonly UserManager<IdentityUser> _userManager = userManager;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly IConfiguration _configuration = configuration;
 
     [HttpPost]
@@ -44,11 +44,15 @@ public class AuthenticationController(
         }
 
         // Add the user in the database
-        IdentityUser user = new()
+        ApplicationUser user = new()
         {
             Email = registerUser.Email,
             SecurityStamp = Guid.NewGuid().ToString(),
-            UserName = registerUser.UserName
+            UserName = registerUser.UserName,
+            Name = registerUser.Name,
+            Tokens_Available = 10,
+            Books_Borrowed = 0,
+            Books_Lent = 0
         };
         var result = await _userManager.CreateAsync(user, registerUser.Password);
 

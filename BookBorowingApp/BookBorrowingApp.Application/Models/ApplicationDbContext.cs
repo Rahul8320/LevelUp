@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookBorrowingApp.Application.Models;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<IdentityUser>(options)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 {
     protected override void OnModelCreating(ModelBuilder builder)
     {
