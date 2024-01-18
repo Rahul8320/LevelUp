@@ -26,12 +26,17 @@ public class AuthenticationController(IAuthService authService) : ControllerBase
 
             var response = await _authService.Register(registerUser);
 
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return BadRequest(response);
+            }
+
             return StatusCode((int)response.StatusCode, response);
 
         }
         catch (ApiException ex)
         {
-            return StatusCode((int)ex.StatusCode, ex.Data);
+            return StatusCode((int)ex.StatusCode, ex.Message);
         }
         catch (Exception ex)
         {
@@ -64,7 +69,7 @@ public class AuthenticationController(IAuthService authService) : ControllerBase
         }
         catch (ApiException ex)
         {
-            return StatusCode((int)ex.StatusCode, ex.Data);
+            return StatusCode((int)ex.StatusCode, ex.Message);
         }
         catch (Exception ex)
         {

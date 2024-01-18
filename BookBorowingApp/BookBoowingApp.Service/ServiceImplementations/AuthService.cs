@@ -5,7 +5,6 @@ using BookBoowingApp.Infrastructure;
 using BookBoowingApp.Service.IServices;
 using BookBoowingApp.Service.Models;
 using BookBorrowingApp.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
 
 namespace BookBoowingApp.Service.ServiceImplementations;
 
@@ -65,7 +64,14 @@ public class AuthService(IAuthRepository authRepository) : IAuthService
 
             if (!result.Succeeded)
             {
-                throw new ApiException<List<IdentityError>>(HttpStatusCode.InternalServerError, result.Errors.ToList(), "User Register Failed!");
+                var error = result.Errors.FirstOrDefault();
+
+                if (error == null)
+                {
+                    return new ServiceResult(HttpStatusCode.InternalServerError, "User Register Failed!");
+                }
+
+                return new ServiceResult<ValidationError>(HttpStatusCode.BadRequest, new ValidationError(error.Code, error.Description));
             }
 
             return new ServiceResult(HttpStatusCode.Created, "User Register Successfully.");

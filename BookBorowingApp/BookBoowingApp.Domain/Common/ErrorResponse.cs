@@ -2,13 +2,13 @@ using System.Net;
 
 namespace BookBoowingApp.Domain.Common;
 
-public class ErrorResponse
+public class ErrorResponse(HttpStatusCode code, string? message = null)
 {
-    public HttpStatusCode ErrorCode { get; set; }
-    public string? Message { get; set; }
+    public HttpStatusCode ErrorCode { get; set; } = code;
+    public string? Message { get; set; } = message;
 }
 
-public class ErrorResponse<T> : ErrorResponse
+public class ErrorResponse<T>(HttpStatusCode code, T errors, string? message = null) : ErrorResponse(code, message)
 {
-    public T Errors { get; set; } = default!;
+    public T Errors { get; set; } = errors;
 }
