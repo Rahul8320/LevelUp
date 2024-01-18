@@ -1,5 +1,10 @@
 using System.Text;
-using BookBorrowingApp.Application.Models;
+using BookBoowingApp.Infrastructure;
+using BookBoowingApp.Infrastructure.DB;
+using BookBoowingApp.Infrastructure.RepositoryImplementations;
+using BookBoowingApp.Service.IServices;
+using BookBoowingApp.Service.ServiceImplementations;
+using BookBorrowingApp.Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // For SqlLite Database Context
 var configuration = builder.Configuration;
-builder.Services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlite(configuration.GetConnectionString("Default")));
+builder.Services.AddDbContext<ApplicationDbContext>(
+    opt => opt.UseSqlite(configuration.GetConnectionString("Default"),
+    b => b.MigrationsAssembly("BookBorrowingApp.Application")));
 
 // For Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -38,6 +45,9 @@ builder.Services.AddAuthentication(options =>
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

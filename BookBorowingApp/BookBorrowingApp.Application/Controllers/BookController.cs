@@ -7,6 +7,12 @@ namespace BookBorrowingApp.Application.Controllers;
 [Route("api/[controller]")]
 public class BookController : ControllerBase
 {
+
+    public BookController()
+    {
+        
+    }
+
     [HttpGet]
     [Authorize]
     public IActionResult GetAllBooks()

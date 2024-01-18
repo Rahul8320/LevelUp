@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BookBorrowingApp.Application.Models.Authentication.Signup;
+namespace BookBoowingApp.Service.Models;
 
 public class RegisterUser
 {

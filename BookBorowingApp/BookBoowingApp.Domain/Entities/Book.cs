@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BookBorrowingApp.Application.Models;
+namespace BookBorrowingApp.Domain.Entities;
 
 public class Book
 {

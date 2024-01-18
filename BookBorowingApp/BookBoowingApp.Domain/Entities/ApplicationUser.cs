@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace BookBorrowingApp.Application.Models;
+namespace BookBorrowingApp.Domain.Entities;
 
 public class ApplicationUser : IdentityUser
 {
