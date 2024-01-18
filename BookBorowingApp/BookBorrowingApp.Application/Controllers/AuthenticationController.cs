@@ -1,3 +1,4 @@
+using System.Text.Json;
 using BookBorrowingApp.Application.Models;
 using BookBorrowingApp.Application.Models.Authentication.Signup;
 using Microsoft.AspNetCore.Identity;
@@ -46,21 +47,21 @@ public class AuthenticationController(
         };
         var result = await _userManager.CreateAsync(user, registerUser.Password);
 
-        if (result.Succeeded)
+        if (!result.Succeeded)
         {
-            return StatusCode(StatusCodes.Status201Created, new Response
+            Console.WriteLine(result);
+            return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse<List<IdentityError>>
             {
-                Status = "Success",
-                Message = "User Register Successfully."
+                Status = "Failed",
+                Message = "User Register Failed!",
+                Errors = result.Errors.ToList()
             });
         }
-        else
+
+        return StatusCode(StatusCodes.Status201Created, new Response
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, new Response
-            {
-                Status = "Error",
-                Message = "Register Failed!"
-            });
-        }
+            Status = "Success",
+            Message = "User Register Successfully."
+        });
     }
 }
