@@ -51,8 +51,8 @@ public class AuthenticationController(
             UserName = registerUser.UserName,
             Name = registerUser.Name,
             Tokens_Available = 10,
-            Books_Borrowed = 0,
-            Books_Lent = 0
+            Books_Borrowed = [],
+            Books_Lent = []
         };
         var result = await _userManager.CreateAsync(user, registerUser.Password);
 
