@@ -16,9 +16,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     {
         builder.Entity<IdentityRole>().HasData
         (
-            new IdentityRole() { Name = "Admin", ConcurrencyStamp = "1", NormalizedName = "Admin" },
-            new IdentityRole() { Name = "User", ConcurrencyStamp = "2", NormalizedName = "User" },
-            new IdentityRole() { Name = "Test", ConcurrencyStamp = "3", NormalizedName = "Test User" }
+            new IdentityRole() { Name = "Admin", ConcurrencyStamp = "1", NormalizedName = "ADMIN" },
+            new IdentityRole() { Name = "User", ConcurrencyStamp = "2", NormalizedName = "USER" },
+            new IdentityRole() { Name = "Test", ConcurrencyStamp = "3", NormalizedName = "TEST" }
         );
     }
 }

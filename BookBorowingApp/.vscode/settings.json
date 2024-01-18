@@ -1,5 +1,8 @@
 {
     "cSpell.words": [
         "Sqlite"
+    ],
+    "cSpell.ignoreWords": [
+        "Hmac"
     ]
 }
