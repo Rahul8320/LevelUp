@@ -31,6 +31,11 @@ public class ServiceResult<T> : ServiceResult
 {
     public T Data { get; set; } = default!;
 
+    public ServiceResult(HttpStatusCode code) : base(code)
+    {
+        Data = default!;
+    }
+
     public ServiceResult(HttpStatusCode code, T data) : base(code)
     {
         Data = data;

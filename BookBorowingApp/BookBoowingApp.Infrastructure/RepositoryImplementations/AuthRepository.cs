@@ -49,7 +49,7 @@ IConfiguration configuration) : IAuthRepository
         }
         catch (Exception ex)
         {
-            throw new ApiException(HttpStatusCode.InternalServerError, ex.Message);
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
         }
 
     }
@@ -80,7 +80,7 @@ IConfiguration configuration) : IAuthRepository
         }
         catch (Exception ex)
         {
-            throw new ApiException(HttpStatusCode.InternalServerError, ex.Message);
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
         }
     }
 
@@ -96,7 +96,7 @@ IConfiguration configuration) : IAuthRepository
         }
         catch (Exception ex)
         {
-            throw new ApiException(HttpStatusCode.InternalServerError, ex.Message);
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
         }
     }
 
@@ -112,7 +112,7 @@ IConfiguration configuration) : IAuthRepository
         }
         catch (Exception ex)
         {
-            throw new ApiException(HttpStatusCode.InternalServerError, ex.Message);
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
         }
     }
 
@@ -131,7 +131,7 @@ IConfiguration configuration) : IAuthRepository
         }
         catch (Exception ex)
         {
-            throw new ApiException(HttpStatusCode.InternalServerError, ex.Message);
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
         }
     }
 

@@ -12,27 +12,38 @@ public class AuthService(IAuthRepository authRepository) : IAuthService
 {
     private readonly IAuthRepository _authRepository = authRepository;
 
-    public async Task<ServiceResult> Login(LoginUser loginUser)
+    public async Task<ServiceResult<JwtSecurityToken>> Login(LoginUser loginUser)
     {
-        // Check for user is exists or not
-        var existingUser = await _authRepository.GetUserByUserName(loginUser.UserName);
-
-        if (existingUser == null)
+        try
         {
-            return new ServiceResult(HttpStatusCode.Unauthorized);
+            // Check for user is exists or not
+            var existingUser = await _authRepository.GetUserByUserName(loginUser.UserName);
+
+            if (existingUser == null)
+            {
+                return new ServiceResult<JwtSecurityToken>(HttpStatusCode.Unauthorized);
+            }
+
+            // check the password is valid
+            var result = await _authRepository.IsValidPassword(existingUser, loginUser.Password);
+
+            if (!result)
+            {
+                return new ServiceResult<JwtSecurityToken>(HttpStatusCode.Unauthorized);
+            }
+
+            var jwtToken = await _authRepository.CreateLoginToken(existingUser);
+
+            return new ServiceResult<JwtSecurityToken>(HttpStatusCode.OK, jwtToken);
         }
-
-        // check the password is valid
-        var result = await _authRepository.IsValidPassword(existingUser, loginUser.Password);
-
-        if (!result)
+        catch (ApiException)
         {
-            return new ServiceResult(HttpStatusCode.Unauthorized);
+            throw;
         }
-
-        var jwtToken = await _authRepository.CreateLoginToken(existingUser);
-
-        return new ServiceResult<JwtSecurityToken>(HttpStatusCode.OK, jwtToken);
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
     }
 
     public async Task<ServiceResult> Register(RegisterUser registerUser)
@@ -44,7 +55,7 @@ public class AuthService(IAuthRepository authRepository) : IAuthService
 
             if (existingUser != null)
             {
-                return new ServiceResult(HttpStatusCode.Conflict, "User Already Exists!");
+                return new ServiceResult<ValidationError>(HttpStatusCode.Conflict, new ValidationError(code: "Register Failed!", description: "User Already Exists!"));
             }
 
             // Create new application User
@@ -82,7 +93,7 @@ public class AuthService(IAuthRepository authRepository) : IAuthService
         }
         catch (Exception ex)
         {
-            throw new ApiException(HttpStatusCode.InternalServerError, ex.Message);
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
         }
 
     }

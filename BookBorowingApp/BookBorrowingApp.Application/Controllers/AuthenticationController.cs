@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using BookBoowingApp.Domain.Common;
 using BookBoowingApp.Service.IServices;
@@ -28,19 +29,24 @@ public class AuthenticationController(IAuthService authService) : ControllerBase
 
             if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                return BadRequest(response);
+                return BadRequest(response.ValidationError);
             }
 
-            return StatusCode((int)response.StatusCode, response);
+            if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                return Conflict(response.ValidationError);
+            }
+
+            return StatusCode((int)response.StatusCode, new { response.StatusCode, response.Message });
 
         }
-        catch (ApiException ex)
+        catch (ApiException)
         {
-            return StatusCode((int)ex.StatusCode, ex.Message);
+            throw;
         }
         catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
         }
 
     }
@@ -65,15 +71,19 @@ public class AuthenticationController(IAuthService authService) : ControllerBase
                 return Unauthorized();
             }
 
-            return Ok(response);
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(response.Data),
+                expiration = response.Data.ValidTo
+            });
         }
-        catch (ApiException ex)
+        catch (ApiException)
         {
-            return StatusCode((int)ex.StatusCode, ex.Message);
+            throw;
         }
         catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
         }
     }
 

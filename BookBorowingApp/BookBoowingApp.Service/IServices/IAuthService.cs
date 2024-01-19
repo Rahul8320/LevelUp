@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using BookBoowingApp.Domain.Common;
 using BookBoowingApp.Service.Models;
 
@@ -7,5 +8,5 @@ public interface IAuthService
 {
     public Task<ServiceResult> Register(RegisterUser registerUser);
 
-    public Task<ServiceResult> Login(LoginUser loginUser);
+    public Task<ServiceResult<JwtSecurityToken>> Login(LoginUser loginUser);
 }

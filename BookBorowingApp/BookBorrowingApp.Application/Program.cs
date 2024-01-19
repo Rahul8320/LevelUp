@@ -4,6 +4,7 @@ using BookBoowingApp.Infrastructure.DB;
 using BookBoowingApp.Infrastructure.RepositoryImplementations;
 using BookBoowingApp.Service.IServices;
 using BookBoowingApp.Service.ServiceImplementations;
+using BookBorrowingApp.Application.Middleware;
 using BookBorrowingApp.Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -53,6 +54,9 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add exception middleware
+builder.Services.AddExceptionHandler<ApiExceptionMiddleware>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -61,6 +65,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseExceptionHandler(opt => { });
 
 app.UseHttpsRedirection();
 
