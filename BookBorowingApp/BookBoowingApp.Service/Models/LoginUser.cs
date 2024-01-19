@@ -4,9 +4,9 @@ namespace BookBoowingApp.Service.Models;
 
 public class LoginUser
 {
-    [Required(ErrorMessage = "Username is required.")]
+    [Required(ErrorMessage = "Username can not be empty!")]
     public string UserName { get; set; } = default!;
 
-    [Required(ErrorMessage = "Password is required.")]
+    [Required(ErrorMessage = "Password can not be empty!")]
     public string Password { get; set; } = default!;
 }
