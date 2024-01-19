@@ -4,9 +4,9 @@ namespace BookBoowingApp.Infrastructure.IRepositories;
 
 public interface IBookRepository
 {
-    public List<Book> GetAllBooks();
-    public Book? GetBookById(Guid id);
-    public Book CreateBook();
-    public Book? UpdateBook();
-    public bool DeleteBook();
+    public Task<List<Book>> GetAllBooks();
+    public Task<Book?> GetBookById(Guid id);
+    public Task<Book> CreateBook(Book book);
+    public Task<Book?> UpdateBook(Book book);
+    public Task<bool> DeleteBook(Book book);
 }
