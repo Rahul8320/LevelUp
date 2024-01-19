@@ -1,10 +1,13 @@
 using System.Net;
+using System.Security.Claims;
 using BookBoowingApp.Domain.Common;
 using BookBoowingApp.Infrastructure.IRepositories;
 using BookBoowingApp.Service.Common;
+using BookBoowingApp.Service.DTOs;
 using BookBoowingApp.Service.IServices;
 using BookBoowingApp.Service.Models;
 using BookBorrowingApp.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
 namespace BookBoowingApp.Service.ServiceImplementations;
@@ -13,14 +16,17 @@ namespace BookBoowingApp.Service.ServiceImplementations;
 /// Book service class for maintains all operations.
 /// </summary>
 /// <param name="bookRepository">The book repository interface.</param>
-public class BookService(IBookRepository bookRepository, IOptions<AppSettings> appSettings) : IBookService
+public class BookService(IBookRepository bookRepository,
+                         IOptions<AppSettings> appSettings,
+                         IHttpContextAccessor httpContextAccessor) : IBookService
 {
+
     /// <summary>
     /// Book repository for maintaining books in database.
     /// </summary>
     private readonly IBookRepository _bookRepository = bookRepository;
-
     private readonly IOptions<AppSettings> _appSettings = appSettings;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
     /// <summary>
     /// Add new book into database.
@@ -32,6 +38,9 @@ public class BookService(IBookRepository bookRepository, IOptions<AppSettings> a
     {
         try
         {
+            // Fetch authenticated user data.
+            var userData = GetUserData();
+
             // create book entity
             var bookEntity = new Book()
             {
@@ -43,7 +52,7 @@ public class BookService(IBookRepository bookRepository, IOptions<AppSettings> a
                 CoverImage = bookModel.CoverImage,
                 Genre = bookModel.Genre,
                 Is_Book_Available = true,
-                // Lent_By_User_id = , // TODO: Add login user id
+                Lent_By_User_id = Guid.Parse(userData.Id!),
                 Currently_Borrowed_By_User_Id = null,
                 Images = bookModel.Images,
                 CreatedAt = DateTime.UtcNow,
@@ -239,6 +248,24 @@ public class BookService(IBookRepository bookRepository, IOptions<AppSettings> a
         {
             throw new ApiException(HttpStatusCode.InternalServerError, new Exception("Can not get supported genres."));
         }
+    }
+
+    /// <summary>
+    /// Get current authenticated user data
+    /// </summary>
+    /// <returns>Return AuthenticatedUserDTO</returns>
+    private AuthenticatedUserDTO GetUserData()
+    {
+        AuthenticatedUserDTO authenticatedUserDTO = new();
+
+        var claimsIdentity = _httpContextAccessor.HttpContext?.User?.Identities.FirstOrDefault(item => item.Claims.Any());
+        var claims = claimsIdentity?.Claims;
+
+        authenticatedUserDTO.Email = claims?.FirstOrDefault(Item => Item.Type == ClaimTypes.Email)?.Value;
+        authenticatedUserDTO.Id = claims?.FirstOrDefault(item => item.Type == ClaimTypes.GivenName)?.Value;
+        authenticatedUserDTO.UserName = claims?.FirstOrDefault(item => item.Type == ClaimTypes.Name)?.Value;
+
+        return authenticatedUserDTO;
     }
 
 }

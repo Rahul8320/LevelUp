@@ -27,7 +27,9 @@ IConfiguration configuration) : IAuthRepository
             var authClaims = new List<Claim>
                 {
                     new(ClaimTypes.Name, applicationUser.UserName!),
-                    new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new(ClaimTypes.Email, applicationUser.Email!),
+                    new(ClaimTypes.GivenName, applicationUser.Id)
                 };
 
             // get user role
