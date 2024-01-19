@@ -3,6 +3,7 @@ using BookBoowingApp.Infrastructure;
 using BookBoowingApp.Infrastructure.DB;
 using BookBoowingApp.Infrastructure.IRepositories;
 using BookBoowingApp.Infrastructure.RepositoryImplementations;
+using BookBoowingApp.Service.Common;
 using BookBoowingApp.Service.IServices;
 using BookBoowingApp.Service.ServiceImplementations;
 using BookBorrowingApp.Application.Middleware;
@@ -52,6 +53,8 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBookService, BookService>();
+
+builder.Services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

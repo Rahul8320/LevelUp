@@ -11,4 +11,6 @@ public interface IBookService
     public Task<ServiceResult<Book>> AddNewBook(AddBookModel bookModel);
     public Task<ServiceResult<Book>> UpdateBookById(Guid id, AddBookModel bookModel);
     public Task<ServiceResult> DeleteBookById(Guid id);
+
+    public ServiceResult<List<string>> GetSupportedGenre();
 }

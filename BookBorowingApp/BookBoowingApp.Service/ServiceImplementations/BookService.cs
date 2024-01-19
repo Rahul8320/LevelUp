@@ -1,9 +1,11 @@
 using System.Net;
 using BookBoowingApp.Domain.Common;
 using BookBoowingApp.Infrastructure.IRepositories;
+using BookBoowingApp.Service.Common;
 using BookBoowingApp.Service.IServices;
 using BookBoowingApp.Service.Models;
 using BookBorrowingApp.Domain.Entities;
+using Microsoft.Extensions.Options;
 
 namespace BookBoowingApp.Service.ServiceImplementations;
 
@@ -11,12 +13,14 @@ namespace BookBoowingApp.Service.ServiceImplementations;
 /// Book service class for maintains all operations.
 /// </summary>
 /// <param name="bookRepository">The book repository interface.</param>
-public class BookService(IBookRepository bookRepository) : IBookService
+public class BookService(IBookRepository bookRepository, IOptions<AppSettings> appSettings) : IBookService
 {
     /// <summary>
     /// Book repository for maintaining books in database.
     /// </summary>
     private readonly IBookRepository _bookRepository = bookRepository;
+
+    private readonly IOptions<AppSettings> _appSettings = appSettings;
 
     /// <summary>
     /// Add new book into database.
@@ -218,4 +222,23 @@ public class BookService(IBookRepository bookRepository) : IBookService
             throw new ApiException(HttpStatusCode.InternalServerError, ex);
         }
     }
+
+    /// <summary>
+    /// Get all supported genres.
+    /// </summary>
+    /// <returns>Returns list of all genres.</returns>
+    /// <exception cref="ApiException">Api Exception.</exception>
+    public ServiceResult<List<string>> GetSupportedGenre()
+    {
+        try
+        {
+            var allGenres = _appSettings.Value.SupportedGenres;
+            return new ServiceResult<List<string>>(HttpStatusCode.OK, allGenres);
+        }
+        catch (Exception)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, new Exception("Can not get supported genres."));
+        }
+    }
+
 }

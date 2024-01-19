@@ -4,6 +4,7 @@ using BookBoowingApp.Service.IServices;
 using BookBoowingApp.Service.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BookBorrowingApp.Application.Controllers;
 
@@ -215,4 +216,31 @@ public class BookController(IBookService bookService) : ControllerBase
         }
     }
 
+    [HttpGet]
+    [Route("supported-genre")]
+    [Authorize]
+    public IActionResult GetSupportedGenres(Guid id)
+    {
+        try
+        {
+            // Updated the book details.
+            var response = _bookService.GetSupportedGenre();
+
+            // Check for 404 response code.
+            if (response.Data.Count == 0 || response.Data.IsNullOrEmpty())
+            {
+                return NotFound();
+            }
+
+            return Ok(response.Data);
+        }
+        catch (ApiException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
+    }
 }
