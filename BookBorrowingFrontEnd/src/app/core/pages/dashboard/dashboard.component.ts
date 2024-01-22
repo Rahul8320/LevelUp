@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { BooksService } from '../../../shared/services/books.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,5 +9,5 @@ import { Component } from '@angular/core';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
-
+  constructor(private _bookService: BooksService) { }
 }
