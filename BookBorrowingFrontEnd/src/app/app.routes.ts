@@ -7,7 +7,7 @@ import { BookDetailsComponent } from './core/pages/book-details/book-details.com
 
 export const routes: Routes = [
     { path: 'dashboard', component: DashboardComponent, title: "Dashboard Page" },
-    { path: 'book-details/:bookId', component: BookDetailsComponent, title: "Details Page" },
+    { path: 'book-details/:bookId', component: BookDetailsComponent, title: "Book Details Page" },
     { path: 'login', component: LoginComponent, title: "Login Page" },
     { path: 'register', component: RegisterComponent, title: "Register Page" },
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
