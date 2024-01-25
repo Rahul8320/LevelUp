@@ -16,6 +16,8 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 // For SqlLite Database Context
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 var configuration = builder.Configuration;
 builder.Services.AddDbContext<ApplicationDbContext>(
     opt => opt.UseSqlite(configuration.GetConnectionString("Default"),
@@ -44,6 +46,16 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = configuration["JWT:ValidIssuer"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]!))
     };
+});
+
+// Add Cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200");
+        });
 });
 
 // Add services to the container.
@@ -75,6 +87,8 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler(opt => { });
 
 app.UseHttpsRedirection();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
 app.UseAuthorization();
