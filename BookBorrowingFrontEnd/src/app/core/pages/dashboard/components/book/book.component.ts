@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Book } from '../../../../models/book.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-book',
@@ -10,4 +11,10 @@ import { Book } from '../../../../models/book.model';
 })
 export class BookComponent {
   @Input() book: Book | undefined;
+
+  constructor(private _route: Router) { }
+
+  goToDetailsPage() {
+    this._route.navigate(["/book-details/", this.book?.id]);
+  }
 }

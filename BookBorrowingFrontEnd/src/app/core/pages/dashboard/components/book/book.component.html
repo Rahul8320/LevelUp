@@ -1,6 +1,9 @@
 <div class="w-[200px] h-[300px]">
   <!-- book cover image -->
-  <div class="justify-center flex">
+  <div
+    class="justify-center flex hover:cursor-pointer"
+    (click)="goToDetailsPage()"
+  >
     <img
       [src]="book?.coverImage"
       alt="cover image"
@@ -21,7 +24,10 @@
     </div>
     <div>
       <!-- book name [bold] -->
-      <h1 class="text-center text-lg font-bold text-slate-800">
+      <h1
+        class="text-center text-lg font-bold text-slate-800 hover:cursor-pointer"
+        (click)="goToDetailsPage()"
+      >
         {{ book?.name }}
       </h1>
       <!-- book author name [grey] -->
