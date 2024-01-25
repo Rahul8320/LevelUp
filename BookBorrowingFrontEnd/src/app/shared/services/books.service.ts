@@ -19,4 +19,9 @@ export class BooksService {
     return this._httpClient.get<Book[]>(apiUrl);
   }
 
+  getBookDetails(bookId: string): Observable<Book> {
+    const apiUrl = `${this.apiBaseUrl}/api/books/${bookId}`;
+    return this._httpClient.get<Book>(apiUrl);
+  }
+
 }

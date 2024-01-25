@@ -1,1 +1,83 @@
-<p>book-details works!</p>
+<main class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 mt-3">
+  @if (isLoading) {
+  <app-loading></app-loading>
+  } @else {
+  <div class="my-10 flex flex-row justify-between">
+    <div class="flex">
+      <!-- cover image -->
+      <img
+        [src]="bookDetails?.coverImage"
+        alt="cover image"
+        class="object-cover h-96 w-72"
+      />
+      <!-- Book Details -->
+      <div class="ml-10">
+        <!-- Book Name -->
+        <h1 class="text-3xl font-bold text-slate-700">
+          {{ bookDetails?.name }}
+        </h1>
+        <!-- author name -->
+        <h3 class="my-2 text-sm text-slate-500 font-medium">
+          by <span class="underline">{{ bookDetails?.author }}</span>
+        </h3>
+        <!-- Book Genre -->
+        <h3 class="my-2 text-slate-500 font-medium">
+          {{ bookDetails?.genre }} Books
+        </h3>
+        <!-- Book Rating -->
+        <h3 class="my-2 text-slate-500 font-medium">
+          Average Rating: {{ bookDetails?.rating }} ⭐
+        </h3>
+
+        <!-- Book Description -->
+        <div class="my-5">
+          <h1 class="text-lg text-slate-600 font-medium">Description:</h1>
+          <p>{{ bookDetails?.description }}</p>
+        </div>
+
+        <!-- Book Added Details -->
+        <div class="my-5">
+          <h1 class="text-lg text-slate-600 font-medium">Other Details:</h1>
+          <h3 class="my-2 text-sm text-slate-500 font-medium">
+            Book Added: {{ bookDetails?.createdAt | date : "medium" }}
+          </h3>
+          <h3 class="my-2 text-sm text-slate-500 font-medium">
+            Last Updated: {{ bookDetails?.createdAt | date : "medium" }}
+          </h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Book Borrow Section -->
+    <div class="flex items-center w-64 m-10">
+      <div class="h-44 w-full p-4 border-2 border-gray-300 rounded-md">
+        <h1 class="font-medium text-slate-500">📔 ORIGINAL BOOK</h1>
+        <p class="text-sm text-slate-600 mx-8">want to read</p>
+        <p class="my-4 text-sm text-sky-600 font-medium">
+          Available for borrow from today.
+        </p>
+        <button mat-raised-button color="primary" class="w-full mt-2">
+          <span class="font-bold">Borrow Now</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (bookDetails?.images) {
+  <!-- Available Images -->
+  <div class="my-10 mx-5">
+    <h1 class="text-xl font-medium text-slate-600 mx-5">
+      Available Book Images:
+    </h1>
+    <div class="flex flex-row">
+      @for (item of bookDetails?.images; track $index) {
+      <div class="m-5">
+        <img [src]="item" alt="book image" class="object-cover h-80 w-64" />
+      </div>
+      }
+    </div>
+  </div>
+  }@else {
+  <div class="h-32"></div>
+  } }
+</main>

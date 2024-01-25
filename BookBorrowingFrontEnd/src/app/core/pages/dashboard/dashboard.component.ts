@@ -5,6 +5,7 @@ import { Book } from '../../models/book.model';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { Subscription } from 'rxjs';
 import { LoadingComponent } from '../../../shared/components/loading/loading.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,14 +24,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.isLoading = true;
     this.getAllBooksSubscription = this._bookService.getAllBooks().subscribe({
-      next: (res) => {
+      next: (res: Book[]) => {
         this.availableBooks = res;
         this.isLoading = false;
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         alert(err?.message || "Something went wrong");
       }
     });
+    this.isLoading = false;
   }
 
   ngOnDestroy(): void {
