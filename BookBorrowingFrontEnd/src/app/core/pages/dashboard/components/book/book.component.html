@@ -1,0 +1,33 @@
+<div class="w-[200px] h-[300px]">
+  <!-- book cover image -->
+  <div class="justify-center flex">
+    <img
+      [src]="book?.coverImage"
+      alt="cover image"
+      class="object-cover h-44 w-36"
+    />
+  </div>
+
+  <div>
+    <div class="flex flex-row justify-around">
+      <!-- book genre -->
+      <span class="text-sm font-medium text-gray-500 ml-2">{{
+        book?.genre
+      }}</span>
+      <!-- book rating -->
+      <span class="text-sm font-medium text-gray-500 mr-2"
+        >{{ book?.rating }} ⭐</span
+      >
+    </div>
+    <div>
+      <!-- book name [bold] -->
+      <h1 class="text-center text-lg font-bold text-slate-800">
+        {{ book?.name }}
+      </h1>
+      <!-- book author name [grey] -->
+      <h3 class="text-center text-sm font-medium text-slate-500">
+        by <span class="underline">{{ book?.author }}</span>
+      </h3>
+    </div>
+  </div>
+</div>

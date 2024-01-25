@@ -10,13 +10,23 @@
 
   <!-- Heading -->
   <div class="text-center my-10">
-    <h1 class="text-3xl font-bold text-slate-700">Know The Unknown</h1>
+    <h1 class="text-3xl font-bold text-slate-700">All Books</h1>
   </div>
 
   <!-- right most sort functionality -->
 
   <!-- List of books -->
+  @if (isLoading) {
+  <app-loading></app-loading>
+  } @else {
   <div>
-    
+    <mat-grid-list cols="5">
+      @for (item of availableBooks; track $index) {
+      <mat-grid-tile>
+        <app-book [book]="item"></app-book>
+      </mat-grid-tile>
+      }
+    </mat-grid-list>
   </div>
+  }
 </main>

@@ -14,9 +14,9 @@ export class BooksService {
     this.apiBaseUrl = environment.apiUrl;
   }
 
-  getAllBooks(): Observable<Book> {
+  getAllBooks(): Observable<Book[]> {
     const apiUrl = `${this.apiBaseUrl}/api/books`;
-    return this._httpClient.get<Book>(apiUrl);
+    return this._httpClient.get<Book[]>(apiUrl);
   }
 
 }
