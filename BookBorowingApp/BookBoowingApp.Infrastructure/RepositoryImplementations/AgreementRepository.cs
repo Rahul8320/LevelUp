@@ -5,13 +5,10 @@ using BookBoowingApp.Infrastructure.IRepositories;
 namespace BookBoowingApp.Infrastructure.RepositoryImplementations;
 
 /// <summary>
-/// Represents the implementation for bike repository interface.
+/// Represent the implementation of agreement repository.
 /// </summary>
-/// <param name="context">Application Db Context</param>
-public class BikeRepository(ApplicationDbContext context) : Repository<Bike>(context), IBikeRepository
+/// <param name="context"></param>
+public class AgreementRepository(ApplicationDbContext context) : Repository<Agreement>(context), IAgreementRepository
 {
-    /// <summary>
-    /// Application Db Context
-    /// </summary>
     private readonly ApplicationDbContext _context = context;
 }

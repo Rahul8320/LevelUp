@@ -3,9 +3,9 @@ using BookBoowingApp.Domain.Entities;
 namespace BookBoowingApp.Infrastructure.IRepositories;
 
 /// <summary>
-/// Represent interface for bike repository.
+/// Represent interface for agreement repository.
 /// </summary>
-public interface IBikeRepository : IRepository<Bike>
+public interface IAgreementRepository : IRepository<Agreement>
 {
 
 }

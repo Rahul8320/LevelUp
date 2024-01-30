@@ -3,9 +3,9 @@ using BookBoowingApp.Domain.Entities;
 namespace BookBoowingApp.Infrastructure.IRepositories;
 
 /// <summary>
-/// Represent interface for bike repository.
+/// Represent the interface for bike rating repository
 /// </summary>
-public interface IBikeRepository : IRepository<Bike>
+public interface IBikeRatingRepository : IRepository<BikeRating>
 {
 
 }
