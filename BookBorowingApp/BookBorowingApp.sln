@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookBoowingApp.Infrastructu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookBoowingApp.Service", "BookBoowingApp.Service\BookBoowingApp.Service.csproj", "{5A769860-91BB-4DBE-B1E3-36D42CA6C1E2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookBorrowingApp.UnitTests", "BookBorrowingApp.UnitTests\BookBorrowingApp.UnitTests.csproj", "{0F363FF4-02C7-465C-A942-AE35DD9A83B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{5A769860-91BB-4DBE-B1E3-36D42CA6C1E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A769860-91BB-4DBE-B1E3-36D42CA6C1E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A769860-91BB-4DBE-B1E3-36D42CA6C1E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F363FF4-02C7-465C-A942-AE35DD9A83B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F363FF4-02C7-465C-A942-AE35DD9A83B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F363FF4-02C7-465C-A942-AE35DD9A83B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F363FF4-02C7-465C-A942-AE35DD9A83B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

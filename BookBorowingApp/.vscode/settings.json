@@ -1,7 +1,8 @@
 {
     "cSpell.words": [
         "hasher",
-        "Sqlite"
+        "Sqlite",
+        "Xunit"
     ],
     "cSpell.ignoreWords": [
         "Hasher",
