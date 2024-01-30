@@ -1,3 +1,4 @@
+using BookBoowingApp.Domain.Entities;
 using BookBorrowingApp.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -8,6 +9,9 @@ namespace BookBoowingApp.Infrastructure.DB;
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 {
     public DbSet<Book> Books { get; set; }
+    public DbSet<Bike> Bikes { get; set; }
+    public DbSet<BikeRating> BikeRatings { get; set; }
+    public DbSet<Agreement> Agreements { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
