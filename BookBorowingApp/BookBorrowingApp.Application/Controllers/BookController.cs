@@ -219,7 +219,7 @@ public class BookController(IBookService bookService) : ControllerBase
     [HttpGet]
     [Route("supported-genre")]
     [Authorize]
-    public IActionResult GetSupportedGenres(Guid id)
+    public IActionResult GetSupportedGenres()
     {
         try
         {

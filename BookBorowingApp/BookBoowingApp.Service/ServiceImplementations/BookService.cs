@@ -197,26 +197,17 @@ public class BookService(IBookRepository bookRepository,
                 return new ServiceResult<Book>(HttpStatusCode.NotFound);
             }
 
-            // create book entity
-            var bookEntity = new Book()
-            {
-                Id = existingBook.Id,
-                Name = bookModel.Name ?? existingBook.Name,
-                Description = bookModel.Description ?? existingBook.Description,
-                Rating = existingBook.Rating,
-                Author = bookModel.Author ?? existingBook.Author,
-                CoverImage = bookModel.CoverImage ?? existingBook.CoverImage,
-                Genre = bookModel.Genre ?? existingBook.Genre,
-                Is_Book_Available = existingBook.Is_Book_Available,
-                Lent_By_User_id = existingBook.Lent_By_User_id,
-                Currently_Borrowed_By_User_Id = existingBook.Currently_Borrowed_By_User_Id,
-                Images = bookModel.Images ?? existingBook.Images,
-                CreatedAt = existingBook.CreatedAt,
-                LastUpdated = DateTime.UtcNow
-            };
+            // update book entity
+            existingBook.Name = bookModel.Name ?? existingBook.Name;
+            existingBook.Description = bookModel.Description ?? existingBook.Description;
+            existingBook.Author = bookModel.Author ?? existingBook.Author;
+            existingBook.CoverImage = bookModel.CoverImage ?? existingBook.CoverImage;
+            existingBook.Genre = bookModel.Genre ?? existingBook.Genre;
+            existingBook.Images = bookModel.Images ?? existingBook.Images;
+            existingBook.LastUpdated = DateTime.UtcNow;
 
             // Update the book on database.
-            var updatedBook = await _bookRepository.UpdateBook(bookEntity)
+            var updatedBook = await _bookRepository.UpdateBook(existingBook)
                 ?? throw new ApiException(HttpStatusCode.InternalServerError,
                 new Exception($"Book with id: {id} updated failed!"));
 
