@@ -1,6 +1,7 @@
 using System.Net;
 using BookBoowingApp.Domain.Common;
 using BookBoowingApp.Service.IServices;
+using BookBoowingApp.Service.Models;
 using BookBorrowingApp.Application.Controllers;
 using BookBorrowingApp.Domain.Entities;
 using FakeItEasy;
@@ -24,7 +25,7 @@ public class BookControllerTests
     }
 
     [Fact]
-    public async void BookController_GetAllAvailableBooks_ReturnsSuccess()
+    public async void BookController_GetAllAvailableBooks_ReturnsOk()
     {
         // Arrange
         var allBooks = new ServiceResult<List<Book>>(HttpStatusCode.OK, [new Book()]);
@@ -54,7 +55,7 @@ public class BookControllerTests
     }
 
     [Fact]
-    public async void BookController_BookDetails_ReturnSuccess()
+    public async void BookController_BookDetails_ReturnsOk()
     {
         // Arrange
         var bookId = Guid.NewGuid();
@@ -83,5 +84,39 @@ public class BookControllerTests
         // Assert
         result.Should().NotBeNull();
         result.Should().BeOfType<NotFoundResult>();
+    }
+
+    [Fact]
+    public async void BookController_CreateNewBook_ReturnsCreated()
+    {
+        // Arrange
+        var addBookModel = A.Fake<AddBookModel>();
+        var book = A.Fake<Book>();
+        var createdBook = new ServiceResult<Book>(HttpStatusCode.Created, book);
+        A.CallTo(() => _bookService.AddNewBook(addBookModel)).Returns(createdBook);
+
+        // Act
+        var result = await _bookController.CreateNewBook(addBookModel);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ObjectResult>();
+    }
+
+    [Fact]
+    public async void BookController_CreateNewBook_ReturnsBadRequest()
+    {
+        // Arrange
+        var addBookModel = new AddBookModel();
+        var book = A.Fake<Book>();
+        var createdBook = new ServiceResult<Book>(HttpStatusCode.Created, book);
+        A.CallTo(() => _bookService.AddNewBook(addBookModel)).Returns(createdBook);
+
+        // Act
+        var result = await _bookController.CreateNewBook(addBookModel);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ObjectResult>();
     }
 }
