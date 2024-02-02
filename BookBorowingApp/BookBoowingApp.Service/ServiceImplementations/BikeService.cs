@@ -4,6 +4,7 @@ using BookBoowingApp.Domain.Entities;
 using BookBoowingApp.Infrastructure.IRepositories;
 using BookBoowingApp.Service.IServices;
 using BookBoowingApp.Service.Models;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BookBoowingApp.Service.ServiceImplementations;
 
@@ -160,6 +161,21 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
         try
         {
             var allBikes = await _unitOfWork.BikeRepository.GetAll();
+
+            if (!maker.IsNullOrEmpty())
+            {
+                allBikes = allBikes.Where(b => b.Maker.Contains(maker!));
+            }
+
+            if (!model.IsNullOrEmpty())
+            {
+                allBikes = allBikes.Where(b => b.Model.Contains(model!));
+            }
+
+            if (price.HasValue)
+            {
+                allBikes = allBikes.Where(b => b.RentalPricePerDay == price);
+            }
 
             return new ServiceResult<List<Bike>>(HttpStatusCode.OK, allBikes.ToList());
         }
