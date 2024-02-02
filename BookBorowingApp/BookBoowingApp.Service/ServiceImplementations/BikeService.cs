@@ -11,7 +11,7 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ServiceResult> CreateNewBike(AddBikeModel bikeModel, Guid userId)
+    public async Task<ServiceResult<Guid>> CreateNewBike(AddBikeModel bikeModel, Guid userId)
     {
         try
         {
@@ -47,7 +47,7 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
             }
 
             // return service result with 201 status code.
-            return new ServiceResult(HttpStatusCode.Created);
+            return new ServiceResult<Guid>(HttpStatusCode.Created, newBike.Id);
         }
         catch (ApiException)
         {
@@ -69,13 +69,13 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
             // Check for bike is exists or not.
             if (existingBike == null)
             {
-                return new ServiceResult(HttpStatusCode.NotFound, $"Bike with id: {bikeId} can not be found!");
+                return new ServiceResult(HttpStatusCode.NotFound);
             }
 
             // Check the owner of the bike is same as user id.
             if (existingBike.Owner != userId)
             {
-                return new ServiceResult(HttpStatusCode.Forbidden, "You don't have access to delete this resource.");
+                return new ServiceResult(HttpStatusCode.Forbidden);
             }
 
             // Delete the existing bike
@@ -101,7 +101,7 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
         }
     }
 
-    public async Task<ServiceResult> UpdateExistingBike(Guid bikeId, AddBikeModel bikeModel, Guid userId)
+    public async Task<ServiceResult<Bike>> UpdateExistingBike(Guid bikeId, AddBikeModel bikeModel, Guid userId)
     {
         try
         {
@@ -111,13 +111,13 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
             // Check for bike is exists or not.
             if (existingBike == null)
             {
-                return new ServiceResult(HttpStatusCode.NotFound, $"Bike with id: {bikeId} can not be found!");
+                return new ServiceResult<Bike>(HttpStatusCode.NotFound);
             }
 
             // Check the owner of the bike is same as user id.
             if (existingBike.Owner != userId)
             {
-                return new ServiceResult(HttpStatusCode.Forbidden, "You don't have access to delete this resource.");
+                return new ServiceResult<Bike>(HttpStatusCode.Forbidden);
             }
 
             // Update the bike details.
@@ -143,7 +143,7 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
             }
 
             // returns service result with success status code
-            return new ServiceResult(HttpStatusCode.OK);
+            return new ServiceResult<Bike>(HttpStatusCode.OK, existingBike);
         }
         catch (ApiException)
         {
@@ -165,13 +165,65 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
         throw new NotImplementedException();
     }
 
-    public Task<ServiceResult> UpdateBikeAvailabilityStatus(Guid bikeId, Guid userId, bool isAvailableForRent, BikeStatus currentBikeStatus)
+    public async Task<ServiceResult<Bike>> UpdateBikeAvailabilityStatus(Bike bike, bool isAvailableForRent, BikeStatus currentBikeStatus)
     {
-        throw new NotImplementedException();
+        try
+        {
+            // update bike data.
+            bike.IsAvailableForRent = isAvailableForRent;
+            bike.CurrentBikeStatus = currentBikeStatus;
+            bike.LastUpdated = DateTime.UtcNow;
+
+            // Update bike in database.
+            _unitOfWork.BikeRepository.Update(bike);
+            var result = await _unitOfWork.Complete();
+
+            // Check for success result
+            if (result == false)
+            {
+                throw new ApiException(HttpStatusCode.InternalServerError, new Exception("Failed to update bike data!"));
+            }
+
+            return new ServiceResult<Bike>(HttpStatusCode.OK, bike);
+        }
+        catch (ApiException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
     }
 
-    public Task<ServiceResult> UpdateBikeRequestForReturnStatus(Guid bikeId, Guid userId, bool isRequestForReturn, BikeStatus currentBikeStatus)
+    public async Task<ServiceResult<Bike>> UpdateBikeRequestForReturnStatus(Bike bike, bool isRequestForReturn, BikeStatus currentBikeStatus)
     {
-        throw new NotImplementedException();
+        try
+        {
+            // update bike data.
+            bike.IsRequestForReturn = isRequestForReturn;
+            bike.CurrentBikeStatus = currentBikeStatus;
+            bike.LastUpdated = DateTime.UtcNow;
+
+            // Update bike in database.
+            _unitOfWork.BikeRepository.Update(bike);
+            var result = await _unitOfWork.Complete();
+
+            // Check for success result
+            if (result == false)
+            {
+                throw new ApiException(HttpStatusCode.InternalServerError, new Exception("Failed to update bike data!"));
+            }
+
+            return new ServiceResult<Bike>(HttpStatusCode.OK, bike);
+        }
+        catch (ApiException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
     }
 }
