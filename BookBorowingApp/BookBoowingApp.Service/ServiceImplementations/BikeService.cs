@@ -155,9 +155,18 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
         }
     }
 
-    public Task<ServiceResult<List<Bike>>> GetAllAvailableBike(string? maker = null, string? model = null, int? price = null)
+    public async Task<ServiceResult<List<Bike>>> GetAllAvailableBike(string? maker = null, string? model = null, int? price = null)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var allBikes = await _unitOfWork.BikeRepository.GetAll();
+
+            return new ServiceResult<List<Bike>>(HttpStatusCode.OK, allBikes.ToList());
+        }
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
     }
 
     public async Task<ServiceResult<Bike>> GetBikeDetails(Guid bikeId)

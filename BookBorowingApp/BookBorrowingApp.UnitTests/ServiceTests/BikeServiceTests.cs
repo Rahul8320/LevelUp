@@ -23,7 +23,7 @@ public class BikeServiceTests
     }
 
     [Fact]
-    public async void BikeService_CreateNewBike_ReturnsSuccess()
+    public async void BikeService_CreateNewBike_ReturnsGuid()
     {
         // Arrange
         var addBikeModel = A.Fake<AddBikeModel>();
@@ -129,7 +129,7 @@ public class BikeServiceTests
     }
 
     [Fact]
-    public async void BikeService_UpdateExistingBike_ReturnsOk()
+    public async void BikeService_UpdateExistingBike_ReturnsBike()
     {
         // Arrange
         var bikeId = Guid.NewGuid();
@@ -225,7 +225,7 @@ public class BikeServiceTests
     }
 
     [Fact]
-    public async void BikeService_UpdateBikeAvailabilityStatus_ReturnsOk()
+    public async void BikeService_UpdateBikeAvailabilityStatus_ReturnsBike()
     {
         // Arrange
         var bike = A.Fake<Bike>();
@@ -258,7 +258,7 @@ public class BikeServiceTests
     }
 
     [Fact]
-    public async void BikeService_UpdateBikeRequestForReturnStatus_ReturnsOk()
+    public async void BikeService_UpdateBikeRequestForReturnStatus_ReturnsBike()
     {
         // Arrange
         var bike = A.Fake<Bike>();
@@ -291,7 +291,7 @@ public class BikeServiceTests
     }
 
     [Fact]
-    public async void BikeService_GetBikeDetails_ReturnsOk()
+    public async void BikeService_GetBikeDetails_ReturnsBike()
     {
         // Arrange
         var bikeId = Guid.NewGuid();
@@ -339,6 +339,30 @@ public class BikeServiceTests
         result.Data.Should().BeNull();
 
         A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async void BikeService_GetAllAvailableBike_ReturnsListOfBike()
+    {
+        // Arrange
+        var allBikes = A.Fake<List<Bike>>();
+
+        A.CallTo(() => _unitOfWork.BikeRepository.GetAll()).Returns(allBikes);
+
+        // Act
+        var result = await _bikeService.GetAllAvailableBike();
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult<List<Bike>>>();
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Message.Should().BeNull();
+        result.ValidationError.Should().BeNull();
+
+        result.Data.Should().NotBeNull();
+
+        A.CallTo(() => _unitOfWork.BikeRepository.GetAll()).MustHaveHappenedOnceExactly();
+
     }
 
 }
