@@ -204,7 +204,7 @@ public class BikeServiceTests
         var bike = A.Fake<Bike>();
         bike.Owner = userId;
 
-        A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId))!.Returns(Task.FromResult<Bike>(null!)); ;
+        A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId))!.Returns(Task.FromResult<Bike>(null!));
         A.CallTo(() => _unitOfWork.BikeRepository.Update(bike));
         A.CallTo(() => _unitOfWork.Complete()).Returns(true);
 
@@ -288,6 +288,57 @@ public class BikeServiceTests
 
         A.CallTo(() => _unitOfWork.BikeRepository.Update(bike)).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.Complete()).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async void BikeService_GetBikeDetails_ReturnsOk()
+    {
+        // Arrange
+        var bikeId = Guid.NewGuid();
+        var bike = A.Fake<Bike>();
+        bike.Id = bikeId;
+
+        A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).Returns(bike);
+
+        // Act
+        var result = await _bikeService.GetBikeDetails(bikeId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult<Bike>>();
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Message.Should().BeNull();
+        result.ValidationError.Should().BeNull();
+
+        result.Data.Should().NotBeNull();
+        result.Data.Id.Should().Be(bikeId);
+
+        A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async void BikeService_GetBikeDetails_ReturnsNotFound()
+    {
+        // Arrange
+        var bikeId = Guid.NewGuid();
+        var bike = A.Fake<Bike>();
+        bike.Id = bikeId;
+
+        A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId))!.Returns(Task.FromResult<Bike>(null!));
+
+        // Act
+        var result = await _bikeService.GetBikeDetails(bikeId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult<Bike>>();
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        result.Message.Should().BeNull();
+        result.ValidationError.Should().BeNull();
+
+        result.Data.Should().BeNull();
+
+        A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).MustHaveHappenedOnceExactly();
     }
 
 }

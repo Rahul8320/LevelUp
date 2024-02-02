@@ -160,9 +160,23 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
         throw new NotImplementedException();
     }
 
-    public Task<ServiceResult<Bike>> GetBikeDetails(Guid bikeId)
+    public async Task<ServiceResult<Bike>> GetBikeDetails(Guid bikeId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var bike = await _unitOfWork.BikeRepository.Get(bikeId);
+
+            if (bike == null)
+            {
+                return new ServiceResult<Bike>(HttpStatusCode.NotFound);
+            }
+
+            return new ServiceResult<Bike>(HttpStatusCode.OK, bike);
+        }
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
     }
 
     public async Task<ServiceResult<Bike>> UpdateBikeAvailabilityStatus(Bike bike, bool isAvailableForRent, BikeStatus currentBikeStatus)
