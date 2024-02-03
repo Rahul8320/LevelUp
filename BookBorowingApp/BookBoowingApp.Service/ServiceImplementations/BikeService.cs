@@ -8,10 +8,24 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BookBoowingApp.Service.ServiceImplementations;
 
+/// <summary>
+/// Represent the implementation of the bike service interface.
+/// </summary>
+/// <param name="unitOfWork">The unit of work interface.</param>
 public class BikeService(IUnitOfWork unitOfWork) : IBikeService
 {
+    /// <summary>
+    /// Represents unit of work interface.
+    /// </summary>
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
+    /// <summary>
+    /// Create new bike.
+    /// </summary>
+    /// <param name="bikeModel">The bike details.</param>
+    /// <param name="userId">The user id.</param>
+    /// <returns>Returns the newly created bike id.</returns>
+    /// <exception cref="ApiException">The api exception.</exception>
     public async Task<ServiceResult<Guid>> CreateNewBike(AddBikeModel bikeModel, Guid userId)
     {
         try
@@ -60,6 +74,13 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
         }
     }
 
+    /// <summary>
+    /// Delete an existing bike.
+    /// </summary>
+    /// <param name="bikeId">The bike id.</param>
+    /// <param name="userId">The user id.</param>
+    /// <returns>Returns the service result indicating this delete operation result.</returns>
+    /// <exception cref="ApiException">The api exception.</exception>
     public async Task<ServiceResult> DeleteBike(Guid bikeId, Guid userId)
     {
         try
@@ -102,6 +123,14 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
         }
     }
 
+    /// <summary>
+    /// Update existing bike details.
+    /// </summary>
+    /// <param name="bikeId">The bike id.</param>
+    /// <param name="bikeModel">The update bike details.</param>
+    /// <param name="userId">The user id.</param>
+    /// <returns>Returns update bike data.</returns>
+    /// <exception cref="ApiException">The api exception.</exception>
     public async Task<ServiceResult<Bike>> UpdateExistingBike(Guid bikeId, AddBikeModel bikeModel, Guid userId)
     {
         try
@@ -156,6 +185,14 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
         }
     }
 
+    /// <summary>
+    /// Get all available bike for rent.
+    /// </summary>
+    /// <param name="maker">The maker of bike.</param>
+    /// <param name="model">The model of bike.</param>
+    /// <param name="price">The price of bike.</param>
+    /// <returns>Returns the list of bikes.</returns>
+    /// <exception cref="ApiException">The api exception.</exception>
     public async Task<ServiceResult<List<Bike>>> GetAllAvailableBike(string? maker = null, string? model = null, int? price = null)
     {
         try
@@ -185,6 +222,12 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
         }
     }
 
+    /// <summary>
+    /// Get bike details by it's id.
+    /// </summary>
+    /// <param name="bikeId">The bike id.</param>
+    /// <returns>Returns bike details.</returns>
+    /// <exception cref="ApiException">The pai exception.</exception>
     public async Task<ServiceResult<Bike>> GetBikeDetails(Guid bikeId)
     {
         try
@@ -204,6 +247,14 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
         }
     }
 
+    /// <summary>
+    /// Update bike availability status.
+    /// </summary>
+    /// <param name="bike">The bike details.</param>
+    /// <param name="isAvailableForRent">The availability status</param>
+    /// <param name="currentBikeStatus">The current bike status.</param>
+    /// <returns>Returns updated bike details.</returns>
+    /// <exception cref="ApiException">The api exception.</exception>
     public async Task<ServiceResult<Bike>> UpdateBikeAvailabilityStatus(Bike bike, bool isAvailableForRent, BikeStatus currentBikeStatus)
     {
         try
@@ -235,6 +286,14 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
         }
     }
 
+    /// <summary>
+    /// Update bike request for return status.
+    /// </summary>
+    /// <param name="bike">The bike details.</param>
+    /// <param name="isRequestForReturn">The request for return status.</param>
+    /// <param name="currentBikeStatus">The current bike status.</param>
+    /// <returns>Returns updated bike details.</returns>
+    /// <exception cref="ApiException">The api exception</exception>
     public async Task<ServiceResult<Bike>> UpdateBikeRequestForReturnStatus(Bike bike, bool isRequestForReturn, BikeStatus currentBikeStatus)
     {
         try
