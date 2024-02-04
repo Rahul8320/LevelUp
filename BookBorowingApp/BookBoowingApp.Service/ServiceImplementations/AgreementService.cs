@@ -48,16 +48,38 @@ public class AgreementService(IUnitOfWork unitOfWork) : IAgreementService
                 );
             }
 
+            var durationInDays =  (int)(agreementModel.EndDate - agreementModel.StartDate).TotalDays;
             // Create new agreement.
             var agreement = new Agreement()
             {
                 Id = Guid.NewGuid(),
                 BikeId = bike.Id,
                 BikeOwnerId = bike.Owner,
+                UserId = userId,
                 StartDate = agreementModel.StartDate,
                 EndDate = agreementModel.EndDate,
+                Duration = durationInDays,
+                IsAcceptedByUser = false,
+                TotalCost = durationInDays * bike.RentalPricePerDay,
+                CreatedAt = DateTime.UtcNow,
+                LastUpdated = DateTime.UtcNow,
             };
 
+            // Update bike availability status
+            bike.IsAvailableForRent = false;
+            bike.CurrentBikeStatus = BikeStatus.Rented;
+            bike.LastUpdated = DateTime.UtcNow;
+
+            _unitOfWork.BikeRepository.Update(bike);
+            _unitOfWork.AgreementRepository.Add(agreement);
+            var result = await _unitOfWork.Complete();
+
+            if(result == false)
+            {
+                throw new ApiException(HttpStatusCode.InternalServerError, new Exception("Create agreement and update bike failed!"));
+            }
+
+            return new ServiceResult<Guid>(HttpStatusCode.Created, agreement.Id);
         }
         catch (ApiException)
         {

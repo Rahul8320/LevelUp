@@ -1,14 +1,12 @@
 {
-    "cSpell.words": [
-        "ASPNETCORE",
-        "dotnet",
-        "hasher",
-        "Metor",
-        "Sqlite",
-        "Xunit"
-    ],
-    "cSpell.ignoreWords": [
-        "Hasher",
-        "Hmac"
-    ]
+  "cSpell.words": [
+    "ASPNETCORE",
+    "Boowing",
+    "dotnet",
+    "hasher",
+    "Metor",
+    "Sqlite",
+    "Xunit"
+  ],
+  "cSpell.ignoreWords": ["Hasher", "Hmac"]
 }
