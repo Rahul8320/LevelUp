@@ -51,4 +51,65 @@ public class AgreementServiceTests
         A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.Complete()).MustHaveHappenedOnceExactly();
     }
+
+    [Fact]
+    public async void AgreementService_CreateNewAgreement_ReturnsNotFound()
+    {
+        // Arrange
+        var addAgreementModel = A.Fake<AddAgreementModel>();
+        var userId = Guid.NewGuid();
+        var bikeId = Guid.NewGuid();
+        var bike = A.Fake<Bike>();
+        bike.Id = bikeId;
+        addAgreementModel.BikeId = bikeId;
+
+        A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId))!.Returns(Task.FromResult<Bike>(null!));
+
+        // Act
+        var result = await _agreementService.CreateNewAgreement(addAgreementModel, userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        result.Message.Should().BeNull();
+        result.ValidationError.Should().NotBeNull();
+        result.ValidationError.Code.Should().Be("BikeNotFound");
+        result.ValidationError.Description.Should().Be($"Bike with id: {bikeId} not found.");
+
+        result.Data.Should().BeEmpty();
+
+        A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _unitOfWork.Complete()).MustNotHaveHappened();
+    }
+
+    [Fact]
+    public async void AgreementService_CreateNewAgreement_ReturnsBadRequest()
+    {
+        // Arrange
+        var addAgreementModel = A.Fake<AddAgreementModel>();
+        var userId = Guid.NewGuid();
+        var bikeId = Guid.NewGuid();
+        var bike = A.Fake<Bike>();
+        bike.Id = bikeId;
+        addAgreementModel.BikeId = bikeId;
+        bike.IsAvailableForRent = false;
+
+        A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).Returns(bike);
+
+        // Act
+        var result = await _agreementService.CreateNewAgreement(addAgreementModel, userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        result.Message.Should().BeNull();
+        result.ValidationError.Should().NotBeNull();
+        result.ValidationError.Code.Should().Be("NotAvailableForRent");
+        result.ValidationError.Description.Should().Be($"Bike with id: {bikeId} is not available for rent.");
+
+        result.Data.Should().BeEmpty();
+
+        A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _unitOfWork.Complete()).MustNotHaveHappened();
+    }
 }
