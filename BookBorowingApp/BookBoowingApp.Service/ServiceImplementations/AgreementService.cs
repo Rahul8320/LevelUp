@@ -99,12 +99,12 @@ public class AgreementService(IUnitOfWork unitOfWork) : IAgreementService
     }
 
     /// <summary>
-    /// 
+    /// Delete an existing agreement.
     /// </summary>
-    /// <param name="agreementId"></param>
-    /// <param name="userId"></param>
-    /// <returns></returns>
-    /// <exception cref="ApiException"></exception>
+    /// <param name="agreementId">The agreement id.</param>
+    /// <param name="userId">The user id.</param>
+    /// <returns>Returns service result indication the result of delete operation.</returns>
+    /// <exception cref="ApiException">The api exception.</exception>
     public async Task<ServiceResult> DeleteAgreement(Guid agreementId, Guid userId)
     {
         try
@@ -163,6 +163,58 @@ public class AgreementService(IUnitOfWork unitOfWork) : IAgreementService
         }
     }
 
+    public async Task<ServiceResult<Agreement>> UpdateExistingAgreement(Guid agreementId, AddAgreementModel agreementModel, Guid userId)
+    {
+        try
+        {
+            // Fetch agreement data
+            var agreement = await _unitOfWork.AgreementRepository.Get(agreementId);
+            var bikeDetails = await _unitOfWork.BikeRepository.Get(agreementModel.BikeId);
+
+            // Check for agreement is exists or not
+            if (agreement == null)
+            {
+                return new ServiceResult<Agreement>(
+                    HttpStatusCode.NotFound,
+                    new ValidationError(code: "NotFoundAgreement", description: $"Agreement with id: {agreementId} is not found!"));
+            }
+
+            // Check for bike is exists or not
+            if (bikeDetails == null)
+            {
+                return new ServiceResult<Agreement>(
+                    HttpStatusCode.NotFound,
+                    new ValidationError(code: "NotFoundBike", description: $"Bike with id: {agreementModel.BikeId} is not found!"));
+            }
+
+            // update the agreement
+            var durationInDays = (int)(agreementModel.EndDate - agreementModel.StartDate).TotalDays;
+            agreement.StartDate = agreementModel.StartDate;
+            agreement.EndDate = agreementModel.EndDate;
+            agreement.TotalCost = durationInDays * bikeDetails.RentalPricePerDay;
+            agreement.LastUpdated = DateTime.UtcNow;
+
+            // Update agreement details.
+            _unitOfWork.AgreementRepository.Update(agreement);
+            var result = await _unitOfWork.Complete();
+
+            if (result == false)
+            {
+                throw new ApiException(HttpStatusCode.InternalServerError, new Exception("Agreement update failed!"));
+            }
+
+            return new ServiceResult<Agreement>(HttpStatusCode.OK, agreement);
+        }
+        catch (ApiException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
+    }
+
     public Task<ServiceResult<Agreement>> GetAgreementDetails(Guid agreementId, Guid userId)
     {
         throw new NotImplementedException();
@@ -173,8 +225,4 @@ public class AgreementService(IUnitOfWork unitOfWork) : IAgreementService
         throw new NotImplementedException();
     }
 
-    public Task<ServiceResult<Agreement>> UpdateExistingAgreement(AddAgreementModel agreementModel, Guid userId)
-    {
-        throw new NotImplementedException();
-    }
 }

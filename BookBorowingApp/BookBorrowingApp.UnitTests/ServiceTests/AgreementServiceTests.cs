@@ -1,4 +1,5 @@
 using System.Net;
+using BookBoowingApp.Domain.Common;
 using BookBoowingApp.Domain.Entities;
 using BookBoowingApp.Infrastructure.IRepositories;
 using BookBoowingApp.Service.Models;
@@ -41,6 +42,7 @@ public class AgreementServiceTests
 
         // Assert
         result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult<Guid>>();
         result.StatusCode.Should().Be(HttpStatusCode.Created);
         result.Message.Should().BeNull();
         result.ValidationError.Should().BeNull();
@@ -70,6 +72,7 @@ public class AgreementServiceTests
 
         // Assert
         result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult<Guid>>();
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
         result.Message.Should().BeNull();
         result.ValidationError.Should().NotBeNull();
@@ -101,6 +104,7 @@ public class AgreementServiceTests
 
         // Assert
         result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult<Guid>>();
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         result.Message.Should().BeNull();
         result.ValidationError.Should().NotBeNull();
@@ -131,6 +135,7 @@ public class AgreementServiceTests
 
         // Assert
         result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult>();
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Message.Should().BeNull();
         result.ValidationError.Should().BeNull();
@@ -157,6 +162,7 @@ public class AgreementServiceTests
 
         // Assert
         result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult>();
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Message.Should().BeNull();
         result.ValidationError.Should().BeNull();
@@ -182,6 +188,7 @@ public class AgreementServiceTests
 
         // Assert
         result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult>();
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
         result.Message.Should().Be($"Agreement with id: {agreementId} not found.");
         result.ValidationError.Should().BeNull();
@@ -209,6 +216,7 @@ public class AgreementServiceTests
 
         // Assert
         result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult>();
         result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         result.Message.Should().Be("You can't deleted this agreement as it's already accepted by you.");
         result.ValidationError.Should().BeNull();
@@ -234,6 +242,7 @@ public class AgreementServiceTests
 
         // Assert
         result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult>();
         result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         result.Message.Should().Be("You don't have permission for this operation.");
         result.ValidationError.Should().BeNull();
@@ -241,5 +250,36 @@ public class AgreementServiceTests
         A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.Complete()).MustNotHaveHappened();
 
+    }
+
+    [Fact]
+    public async void AgreementService_UpdateExistingAgreement_ReturnsAgreement()
+    {
+        // Arrange
+        var agreementId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
+        var agreement = A.Fake<Agreement>();
+        agreement.Id = agreementId;
+        agreement.UserId = userId;
+        var addAgreementModel = A.Fake<AddAgreementModel>();
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).Returns(agreement);
+        A.CallTo(() => _unitOfWork.Complete()).Returns(true);
+
+        // Act
+        var result = await _agreementService.UpdateExistingAgreement(agreementId, addAgreementModel, userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult<Agreement>>();
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Message.Should().BeNull();
+        result.ValidationError.Should().BeNull();
+
+        result.Data.Should().NotBeNull();
+        result.Data.Id.Should().Be(agreementId);
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _unitOfWork.Complete()).MustHaveHappenedOnceExactly();
     }
 }

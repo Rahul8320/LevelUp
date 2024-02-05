@@ -20,10 +20,11 @@ public interface IAgreementService
     /// <summary>
     /// Update existing agreement details.
     /// </summary>
+    /// <param name="agreementId">The agreement id.</param>
     /// <param name="agreementModel">The updated agreement details.</param>
     /// <param name="userId">The user id.</param>
     /// <returns>Returns updated agreement details.</returns>
-    Task<ServiceResult<Agreement>> UpdateExistingAgreement(AddAgreementModel agreementModel, Guid userId);
+    Task<ServiceResult<Agreement>> UpdateExistingAgreement(Guid agreementId, AddAgreementModel agreementModel, Guid userId);
 
     /// <summary>
     /// Delete an agreement.
