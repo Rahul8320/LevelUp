@@ -74,6 +74,12 @@ public class BikeRatingService(IUnitOfWork unitOfWork) : IBikeRatingService
         }
     }
 
+    /// <summary>
+    /// Get bike rating details
+    /// </summary>
+    /// <param name="bikeId">The bike id</param>
+    /// <returns>Returns list of all ratings with average rating number.</returns>
+    /// <exception cref="ApiException">The Api Exception.</exception>
     public async Task<ServiceResult<BikeRatingDetailsDTO>> GetAverageRatingDetails(Guid bikeId)
     {
         try
@@ -82,7 +88,8 @@ public class BikeRatingService(IUnitOfWork unitOfWork) : IBikeRatingService
             var bikeRatingDetail = new BikeRatingDetailsDTO
             {
                 NumberOfRating = 0,
-                AverageRating = 0
+                AverageRating = 0,
+                BikeRatings = []
             };
 
             // Fetch all rating details.
@@ -104,6 +111,7 @@ public class BikeRatingService(IUnitOfWork unitOfWork) : IBikeRatingService
                     // update bike rating details dto.
                     bikeRatingDetail.NumberOfRating = numberOfRating;
                     bikeRatingDetail.AverageRating = totalSumOfAllRatings / numberOfRating;
+                    bikeRatingDetail.BikeRatings = allBikeRatings;
                 }
             }
 
@@ -119,8 +127,62 @@ public class BikeRatingService(IUnitOfWork unitOfWork) : IBikeRatingService
         }
     }
 
-    public Task<ServiceResult> UpdateExistingRating(Guid ratingId, string review, Guid userId)
+    /// <summary>
+    /// Update an existing rating details.
+    /// </summary>
+    /// <param name="ratingId">The rating id.</param>
+    /// <param name="review">The updated review.</param>
+    /// <param name="userId">The user id.</param>
+    /// <returns>Returns a service result indication the result of this operation.</returns>
+    /// <exception cref="ApiException">The api exception.</exception>
+    public async Task<ServiceResult> UpdateExistingRating(Guid ratingId, string review, Guid userId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            // Fetch rating details
+            var bikeRating = await _unitOfWork.BikeRatingRepository.Get(ratingId);
+
+            // check for rating details exists or not
+            if (bikeRating == null)
+            {
+                return new ServiceResult(
+                    HttpStatusCode.NotFound,
+                    new ValidationError(code: "NotFoundRating", description: $"The rating with id: {ratingId} is not found!")
+                );
+            }
+
+            // check for requested user is same as rating user
+            if (bikeRating.UserId != userId)
+            {
+                return new ServiceResult(
+                    HttpStatusCode.Forbidden,
+                    new ValidationError(code: "PermissionDenied", description: "You don't have permission for this operation!")
+                );
+            }
+
+            // Update the bike rating
+            bikeRating.Review = review;
+            bikeRating.LastUpdated = DateTime.UtcNow;
+
+            // Update the database
+            _unitOfWork.BikeRatingRepository.Update(bikeRating);
+            var result = await _unitOfWork.Complete();
+
+            // Check for success result.
+            if (result == false)
+            {
+                throw new ApiException(HttpStatusCode.InternalServerError, new Exception("Bike rating updated failed!"));
+            }
+
+            return new ServiceResult(HttpStatusCode.OK);
+        }
+        catch (ApiException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
     }
 }
