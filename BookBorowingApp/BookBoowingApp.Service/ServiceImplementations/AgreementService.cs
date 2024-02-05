@@ -261,6 +261,13 @@ public class AgreementService(IUnitOfWork unitOfWork) : IAgreementService
         }
     }
 
+    /// <summary>
+    /// Get agreement details by id.
+    /// </summary>
+    /// <param name="agreementId">The agreement id.</param>
+    /// <param name="userId">The user id.</param>
+    /// <returns>Returns agreement details.</returns>
+    /// <exception cref="ApiException">The Api Exception.</exception>
     public async Task<ServiceResult<Agreement>> GetAgreementDetails(Guid agreementId, Guid userId)
     {
         try
@@ -306,9 +313,31 @@ public class AgreementService(IUnitOfWork unitOfWork) : IAgreementService
         }
     }
 
-    public Task<ServiceResult<List<Agreement>>> GetAllAgreements(Guid userId)
+    /// <summary>
+    /// Get all agreements for specific user id.
+    /// </summary>
+    /// <param name="userId">The user id.</param>
+    /// <returns>Returns list of agreement.</returns>
+    /// <exception cref="ApiException">The api exception.</exception>
+    public async Task<ServiceResult<List<Agreement>>> GetAllAgreements(Guid userId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            // Fetch all agreements data.
+            var allAgreements = await _unitOfWork.AgreementRepository.GetAll();
+
+            var result = allAgreements.Where(u => u.BikeOwnerId == userId).ToList();
+
+            return new ServiceResult<List<Agreement>>(HttpStatusCode.OK, result);
+        }
+        catch (ApiException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
     }
 
 }

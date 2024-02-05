@@ -590,5 +590,28 @@ public class AgreementServiceTests
         A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).MustHaveHappenedOnceExactly();
     }
 
+    [Fact]
+    public async void AgreementService_GetAllAgreements_ReturnsListOfAgreement()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var agreementList = A.Fake<List<Agreement>>();
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.GetAll()).Returns(agreementList);
+
+        // Act
+        var result = await _agreementService.GetAllAgreements(userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult<List<Agreement>>>();
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Message.Should().BeNull();
+        result.ValidationError.Should().BeNull();
+
+        result.Data.Should().NotBeNull();
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.GetAll()).MustHaveHappenedOnceExactly();
+    }
 
 }
