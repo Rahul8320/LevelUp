@@ -169,7 +169,6 @@ public class AgreementService(IUnitOfWork unitOfWork) : IAgreementService
         {
             // Fetch agreement data
             var agreement = await _unitOfWork.AgreementRepository.Get(agreementId);
-            var bikeDetails = await _unitOfWork.BikeRepository.Get(agreementModel.BikeId);
 
             // Check for agreement is exists or not
             if (agreement == null)
@@ -179,31 +178,70 @@ public class AgreementService(IUnitOfWork unitOfWork) : IAgreementService
                     new ValidationError(code: "NotFoundAgreement", description: $"Agreement with id: {agreementId} is not found!"));
             }
 
-            // Check for bike is exists or not
-            if (bikeDetails == null)
+            // Check for valid bike id
+            if (agreement.BikeId != agreementModel.BikeId)
             {
                 return new ServiceResult<Agreement>(
-                    HttpStatusCode.NotFound,
-                    new ValidationError(code: "NotFoundBike", description: $"Bike with id: {agreementModel.BikeId} is not found!"));
+                    HttpStatusCode.BadRequest,
+                    new ValidationError(code: "InvalidBikeId", description: "Invalid Bike Id!"));
             }
 
-            // update the agreement
-            var durationInDays = (int)(agreementModel.EndDate - agreementModel.StartDate).TotalDays;
-            agreement.StartDate = agreementModel.StartDate;
-            agreement.EndDate = agreementModel.EndDate;
-            agreement.TotalCost = durationInDays * bikeDetails.RentalPricePerDay;
-            agreement.LastUpdated = DateTime.UtcNow;
-
-            // Update agreement details.
-            _unitOfWork.AgreementRepository.Update(agreement);
-            var result = await _unitOfWork.Complete();
-
-            if (result == false)
+            // Check for user accepted & user request for delete agreement
+            if (agreement.IsAcceptedByUser == true && agreement.UserId == userId)
             {
-                throw new ApiException(HttpStatusCode.InternalServerError, new Exception("Agreement update failed!"));
+                return new ServiceResult<Agreement>(
+                    HttpStatusCode.Forbidden,
+                    new ValidationError(
+                        code: "PermissionDenied",
+                        description: "You can't deleted this agreement as it's already accepted by you."
+                    )
+                );
             }
 
-            return new ServiceResult<Agreement>(HttpStatusCode.OK, agreement);
+            // Check for user not accepted and user request for delete agreement or bike owner request for delete.
+            if ((agreement.IsAcceptedByUser == false && agreement.UserId == userId) || (agreement.BikeOwnerId == userId))
+            {
+                // Fetch bike data.
+                var bikeDetails = await _unitOfWork.BikeRepository.Get(agreementModel.BikeId);
+
+                // Check for bike is exists or not
+                if (bikeDetails == null)
+                {
+                    return new ServiceResult<Agreement>(
+                        HttpStatusCode.NotFound,
+                        new ValidationError(
+                            code: "NotFoundBike",
+                            description: $"Bike with id: {agreementModel.BikeId} is not found!"
+                        )
+                    );
+                }
+
+                // update the agreement
+                var durationInDays = (int)(agreementModel.EndDate - agreementModel.StartDate).TotalDays;
+                agreement.StartDate = agreementModel.StartDate;
+                agreement.EndDate = agreementModel.EndDate;
+                agreement.TotalCost = durationInDays * bikeDetails.RentalPricePerDay;
+                agreement.LastUpdated = DateTime.UtcNow;
+
+                // Update agreement details.
+                _unitOfWork.AgreementRepository.Update(agreement);
+                var result = await _unitOfWork.Complete();
+
+                if (result == false)
+                {
+                    throw new ApiException(HttpStatusCode.InternalServerError, new Exception("Agreement update failed!"));
+                }
+
+                return new ServiceResult<Agreement>(HttpStatusCode.OK, agreement);
+            }
+
+            return new ServiceResult<Agreement>(
+                HttpStatusCode.Forbidden,
+                new ValidationError(
+                        code: "PermissionDenied",
+                        description: "You don't have permission for this operation."
+                    )
+                );
         }
         catch (ApiException)
         {
