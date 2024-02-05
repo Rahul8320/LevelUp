@@ -68,6 +68,8 @@ builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IBikeService, BikeService>();
+builder.Services.AddScoped<IAgreementService, AgreementService>();
+builder.Services.AddScoped<IBikeRatingService, BikeRatingService>();
 
 builder.Services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
 
