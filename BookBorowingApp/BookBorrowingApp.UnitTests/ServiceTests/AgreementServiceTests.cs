@@ -112,4 +112,134 @@ public class AgreementServiceTests
         A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.Complete()).MustNotHaveHappened();
     }
+
+    [Fact]
+    public async void AgreementService_DeleteAgreement_ReturnsOk_ForNotAcceptedAgreement()
+    {
+        // Arrange
+        var agreementId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
+        var agreement = A.Fake<Agreement>();
+        agreement.UserId = userId;
+        agreement.IsAcceptedByUser = false;
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).Returns(agreement);
+        A.CallTo(() => _unitOfWork.Complete()).Returns(true);
+
+        // Act
+        var result = await _agreementService.DeleteAgreement(agreementId, userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Message.Should().BeNull();
+        result.ValidationError.Should().BeNull();
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _unitOfWork.Complete()).MustHaveHappenedOnceExactly();
+
+    }
+
+    [Fact]
+    public async void AgreementService_DeleteAgreement_ReturnsOk_ForBikeOwner()
+    {
+        // Arrange
+        var agreementId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
+        var agreement = A.Fake<Agreement>();
+        agreement.BikeOwnerId = userId;
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).Returns(agreement);
+        A.CallTo(() => _unitOfWork.Complete()).Returns(true);
+
+        // Act
+        var result = await _agreementService.DeleteAgreement(agreementId, userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Message.Should().BeNull();
+        result.ValidationError.Should().BeNull();
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _unitOfWork.Complete()).MustHaveHappenedOnceExactly();
+
+    }
+
+    [Fact]
+    public async void AgreementService_DeleteAgreement_ReturnsNotFound()
+    {
+        // Arrange
+        var agreementId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
+        var agreement = A.Fake<Agreement>();
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId))!.Returns(Task.FromResult<Agreement>(null!));
+        A.CallTo(() => _unitOfWork.Complete()).Returns(true);
+
+        // Act
+        var result = await _agreementService.DeleteAgreement(agreementId, userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        result.Message.Should().Be($"Agreement with id: {agreementId} not found.");
+        result.ValidationError.Should().BeNull();
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _unitOfWork.Complete()).MustNotHaveHappened();
+
+    }
+
+    [Fact]
+    public async void AgreementService_DeleteAgreement_ReturnsForbidden_ForAcceptedAgreement()
+    {
+        // Arrange
+        var agreementId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
+        var agreement = A.Fake<Agreement>();
+        agreement.UserId = userId;
+        agreement.IsAcceptedByUser = true;
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).Returns(agreement);
+        A.CallTo(() => _unitOfWork.Complete()).Returns(true);
+
+        // Act
+        var result = await _agreementService.DeleteAgreement(agreementId, userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        result.Message.Should().Be("You can't deleted this agreement as it's already accepted by you.");
+        result.ValidationError.Should().BeNull();
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _unitOfWork.Complete()).MustNotHaveHappened();
+
+    }
+
+    [Fact]
+    public async void AgreementService_DeleteAgreement_ReturnsForbidden()
+    {
+        // Arrange
+        var agreementId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
+        var agreement = A.Fake<Agreement>();
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).Returns(agreement);
+        A.CallTo(() => _unitOfWork.Complete()).Returns(true);
+
+        // Act
+        var result = await _agreementService.DeleteAgreement(agreementId, userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        result.Message.Should().Be("You don't have permission for this operation.");
+        result.ValidationError.Should().BeNull();
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _unitOfWork.Complete()).MustNotHaveHappened();
+
+    }
 }

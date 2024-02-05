@@ -17,6 +17,13 @@ public class AgreementService(IUnitOfWork unitOfWork) : IAgreementService
     /// </summary>
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
+    /// <summary>
+    /// Create new agreement.
+    /// </summary>
+    /// <param name="agreementModel">New agreement details.</param>
+    /// <param name="userId">The user id</param>
+    /// <returns>Returns newly created agreement id.</returns>
+    /// <exception cref="ApiException">The Api Exception.</exception>
     public async Task<ServiceResult<Guid>> CreateNewAgreement(AddAgreementModel agreementModel, Guid userId)
     {
         try
@@ -48,7 +55,7 @@ public class AgreementService(IUnitOfWork unitOfWork) : IAgreementService
                 );
             }
 
-            var durationInDays =  (int)(agreementModel.EndDate - agreementModel.StartDate).TotalDays;
+            var durationInDays = (int)(agreementModel.EndDate - agreementModel.StartDate).TotalDays;
             // Create new agreement.
             var agreement = new Agreement()
             {
@@ -74,9 +81,9 @@ public class AgreementService(IUnitOfWork unitOfWork) : IAgreementService
             _unitOfWork.AgreementRepository.Add(agreement);
             var result = await _unitOfWork.Complete();
 
-            if(result == false)
+            if (result == false)
             {
-                throw new ApiException(HttpStatusCode.InternalServerError, new Exception("Create agreement and update bike failed!"));
+                throw new ApiException(HttpStatusCode.InternalServerError, new Exception("Create agreement failed!"));
             }
 
             return new ServiceResult<Guid>(HttpStatusCode.Created, agreement.Id);
@@ -91,9 +98,69 @@ public class AgreementService(IUnitOfWork unitOfWork) : IAgreementService
         }
     }
 
-    public Task<ServiceResult> DeleteAgreement(Guid agreementId, Guid userId)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="agreementId"></param>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    /// <exception cref="ApiException"></exception>
+    public async Task<ServiceResult> DeleteAgreement(Guid agreementId, Guid userId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            // Fetch agreement details
+            var agreement = await _unitOfWork.AgreementRepository.Get(agreementId);
+
+            // Check for agreement exists or not
+            if (agreement == null)
+            {
+                return new ServiceResult(HttpStatusCode.NotFound, $"Agreement with id: {agreementId} not found.");
+            }
+
+            // Check for user accepted & user request for delete agreement
+            if (agreement.IsAcceptedByUser == true && agreement.UserId == userId)
+            {
+                return new ServiceResult(HttpStatusCode.Forbidden, "You can't deleted this agreement as it's already accepted by you.");
+            }
+
+            // Check for user not accepted and user request for delete agreement or bike owner request for delete.
+            if ((agreement.IsAcceptedByUser == false && agreement.UserId == userId) || (agreement.BikeOwnerId == userId))
+            {
+                var bike = await _unitOfWork.BikeRepository.Get(agreement.BikeId);
+
+                // Check for bike existing or not.
+                if (bike != null)
+                {
+                    bike.IsAvailableForRent = true;
+                    bike.CurrentBikeStatus = BikeStatus.AvailableForRent;
+                    bike.LastUpdated = DateTime.UtcNow;
+                    _unitOfWork.BikeRepository.Update(bike);
+                }
+
+                // Update the database.
+                _unitOfWork.AgreementRepository.Delete(agreement);
+                var result = await _unitOfWork.Complete();
+
+                // check for success result
+                if (result == false)
+                {
+                    throw new ApiException(HttpStatusCode.InternalServerError, new Exception("Agreement deleted failed!"));
+                }
+
+                return new ServiceResult(HttpStatusCode.OK);
+            }
+
+            return new ServiceResult(HttpStatusCode.Forbidden, "You don't have permission for this operation.");
+        }
+        catch (ApiException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
     }
 
     public Task<ServiceResult<Agreement>> GetAgreementDetails(Guid agreementId, Guid userId)
