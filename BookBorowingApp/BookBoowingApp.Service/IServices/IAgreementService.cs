@@ -45,6 +45,7 @@ public interface IAgreementService
     /// <summary>
     /// Get all agreements.
     /// </summary>
+    /// <param name="userId">The user id.</param>
     /// <returns>Returns list of all agreement.</returns>
-    Task<ServiceResult<List<Agreement>>> GetAllAgreements();
+    Task<ServiceResult<List<Agreement>>> GetAllAgreements(Guid userId);
 }

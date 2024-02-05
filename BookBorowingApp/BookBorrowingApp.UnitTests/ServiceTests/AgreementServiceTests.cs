@@ -480,5 +480,115 @@ public class AgreementServiceTests
         A.CallTo(() => _unitOfWork.Complete()).MustNotHaveHappened();
     }
 
+    [Fact]
+    public async void AgreementService_GetAgreementDetails_ReturnsAgreement_ForAgreementUser()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var agreementId = Guid.NewGuid();
+        var agreement = A.Fake<Agreement>();
+        agreement.Id = agreementId;
+        agreement.UserId = userId;
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).Returns(agreement);
+
+        // Act
+        var result = await _agreementService.GetAgreementDetails(agreementId, userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult<Agreement>>();
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Message.Should().BeNull();
+        result.ValidationError.Should().BeNull();
+
+        result.Data.Should().NotBeNull();
+        result.Data.Id.Should().Be(agreementId);
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async void AgreementService_GetAgreementDetails_ReturnsAgreement_ForBikeOwner()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var agreementId = Guid.NewGuid();
+        var agreement = A.Fake<Agreement>();
+        agreement.Id = agreementId;
+        agreement.BikeOwnerId = userId;
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).Returns(agreement);
+
+        // Act
+        var result = await _agreementService.GetAgreementDetails(agreementId, userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult<Agreement>>();
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Message.Should().BeNull();
+        result.ValidationError.Should().BeNull();
+
+        result.Data.Should().NotBeNull();
+        result.Data.Id.Should().Be(agreementId);
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async void AgreementService_GetAgreementDetails_ReturnsNotFound()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var agreementId = Guid.NewGuid();
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId))!.Returns(Task.FromResult<Agreement>(null!));
+
+        // Act
+        var result = await _agreementService.GetAgreementDetails(agreementId, userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult<Agreement>>();
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        result.Message.Should().BeNull();
+        result.ValidationError.Should().NotBeNull();
+        result.ValidationError.Code.Should().Be("NotFoundAgreement");
+        result.ValidationError.Description.Should().Be($"Agreement with id: {agreementId} not found!");
+
+        result.Data.Should().BeNull();
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async void AgreementService_GetAgreementDetails_ReturnsForbidden()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var agreementId = Guid.NewGuid();
+        var agreement = A.Fake<Agreement>();
+        agreement.Id = agreementId;
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).Returns(agreement);
+
+        // Act
+        var result = await _agreementService.GetAgreementDetails(agreementId, userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult<Agreement>>();
+        result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        result.Message.Should().BeNull();
+        result.ValidationError.Should().NotBeNull();
+        result.ValidationError.Code.Should().Be("PermissionDenied");
+        result.ValidationError.Description.Should().Be("You don't have the permission for this operation!");
+
+        result.Data.Should().BeNull();
+
+        A.CallTo(() => _unitOfWork.AgreementRepository.Get(agreementId)).MustHaveHappenedOnceExactly();
+    }
+
 
 }

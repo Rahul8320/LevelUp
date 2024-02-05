@@ -163,6 +163,14 @@ public class AgreementService(IUnitOfWork unitOfWork) : IAgreementService
         }
     }
 
+    /// <summary>
+    /// Update an existing agreement details.
+    /// </summary>
+    /// <param name="agreementId">The agreement id.</param>
+    /// <param name="agreementModel">The update agreement model.</param>
+    /// <param name="userId">The user id.</param>
+    /// <returns>Returns updated agreement details.</returns>
+    /// <exception cref="ApiException">The api exception.</exception>
     public async Task<ServiceResult<Agreement>> UpdateExistingAgreement(Guid agreementId, AddAgreementModel agreementModel, Guid userId)
     {
         try
@@ -253,12 +261,52 @@ public class AgreementService(IUnitOfWork unitOfWork) : IAgreementService
         }
     }
 
-    public Task<ServiceResult<Agreement>> GetAgreementDetails(Guid agreementId, Guid userId)
+    public async Task<ServiceResult<Agreement>> GetAgreementDetails(Guid agreementId, Guid userId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            // Fetch agreement data.
+            var agreement = await _unitOfWork.AgreementRepository.Get(agreementId);
+
+            // Check for agreement is exists or not.
+            if (agreement == null)
+            {
+                return new ServiceResult<Agreement>(
+                    HttpStatusCode.NotFound,
+                    new ValidationError(
+                        code: "NotFoundAgreement",
+                        description: $"Agreement with id: {agreementId} not found!"
+                    )
+                );
+            }
+
+            // Check if the request user is same as agreement user or bike owner
+            if (agreement.UserId == userId || agreement.BikeOwnerId == userId)
+            {
+                // Return the agreement details.
+                return new ServiceResult<Agreement>(HttpStatusCode.OK, agreement);
+            }
+
+            // Return forbidden result.
+            return new ServiceResult<Agreement>(
+                HttpStatusCode.Forbidden,
+                new ValidationError(
+                    code: "PermissionDenied",
+                    description: "You don't have the permission for this operation!"
+                )
+            );
+        }
+        catch (ApiException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
     }
 
-    public Task<ServiceResult<List<Agreement>>> GetAllAgreements()
+    public Task<ServiceResult<List<Agreement>>> GetAllAgreements(Guid userId)
     {
         throw new NotImplementedException();
     }
