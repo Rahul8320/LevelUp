@@ -4,7 +4,6 @@ using System.Net.Mime;
 using BookBoowingApp.Domain.Common;
 using BookBoowingApp.Service.IServices;
 using BookBoowingApp.Service.Models;
-using BookBorrowingApp.Application.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,17 +15,12 @@ namespace BookBorrowingApp.Application.Controllers;
 /// <param name="authService">The auth service interface</param>
 [ApiController]
 [Route("api/[controller]")]
-public class AuthenticationController(IAuthService authService, IHttpContextAccessor httpContextAccessor) : ControllerBase
+public class AuthenticationController(IAuthService authService) : ControllerBase
 {
     /// <summary>
     /// Represents the auth service interface.
     /// </summary>
     private readonly IAuthService _authService = authService;
-
-    /// <summary>
-    /// Represents auth helper.
-    /// </summary>
-    private readonly AuthHelper _authHelper = new(httpContextAccessor);
 
     /// <summary>
     /// Register new user
@@ -118,14 +112,20 @@ public class AuthenticationController(IAuthService authService, IHttpContextAcce
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="ApiException"></exception>
     [HttpGet]
     [Route("verify")]
     [Authorize]
+    [Produces(MediaTypeNames.Application.Json)]
     public IActionResult Verify()
     {
         try
         {
-            var data = _authHelper.GetUserData();
+            var data = _authService.GetAuthenticatedUserData();
 
             return Ok(data);
         }

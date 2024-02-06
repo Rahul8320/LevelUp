@@ -16,17 +16,20 @@ namespace BookBoowingApp.Service.ServiceImplementations;
 /// Book service class for maintains all operations.
 /// </summary>
 /// <param name="bookRepository">The book repository interface.</param>
-public class BookService(IBookRepository bookRepository,
-                         IOptions<AppSettings> appSettings,
-                         IHttpContextAccessor httpContextAccessor) : IBookService
+public class BookService(IBookRepository bookRepository, IOptions<AppSettings> appSettings, IAuthService authService) : IBookService
 {
-
     /// <summary>
     /// Book repository for maintaining books in database.
     /// </summary>
     private readonly IBookRepository _bookRepository = bookRepository;
+    /// <summary>
+    /// Represents application settings.
+    /// </summary>
     private readonly IOptions<AppSettings> _appSettings = appSettings;
-    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+    /// <summary>
+    /// Represents the auth service interface.
+    /// </summary>
+    private readonly IAuthService _authService = authService;
 
     /// <summary>
     /// Add new book into database.
@@ -39,7 +42,7 @@ public class BookService(IBookRepository bookRepository,
         try
         {
             // Fetch authenticated user data.
-            var userData = GetUserData();
+            var userData = _authService.GetAuthenticatedUserData();
 
             // create book entity
             var bookEntity = new Book()
@@ -239,24 +242,6 @@ public class BookService(IBookRepository bookRepository,
         {
             throw new ApiException(HttpStatusCode.InternalServerError, new Exception("Can not get supported genres."));
         }
-    }
-
-    /// <summary>
-    /// Get current authenticated user data
-    /// </summary>
-    /// <returns>Return AuthenticatedUserDTO</returns>
-    private AuthenticatedUserDTO GetUserData()
-    {
-        AuthenticatedUserDTO authenticatedUserDTO = new();
-
-        var claimsIdentity = _httpContextAccessor.HttpContext?.User?.Identities.FirstOrDefault(item => item.Claims.Any());
-        var claims = claimsIdentity?.Claims;
-
-        authenticatedUserDTO.Email = claims?.FirstOrDefault(Item => Item.Type == ClaimTypes.Email)?.Value;
-        authenticatedUserDTO.UserId = claims?.FirstOrDefault(item => item.Type == ClaimTypes.GivenName)?.Value;
-        authenticatedUserDTO.UserName = claims?.FirstOrDefault(item => item.Type == ClaimTypes.Name)?.Value;
-
-        return authenticatedUserDTO;
     }
 
 }
