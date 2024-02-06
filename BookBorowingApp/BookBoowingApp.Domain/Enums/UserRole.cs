@@ -3,7 +3,7 @@ namespace BookBoowingApp.Domain.Enums;
 /// <summary>
 /// Represents identity role enum.
 /// </summary>
-public enum IdentityRole
+public enum UserRole
 {
     /// <summary>
     /// Represents user role.

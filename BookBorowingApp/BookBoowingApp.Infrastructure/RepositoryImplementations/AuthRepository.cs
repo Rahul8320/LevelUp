@@ -4,6 +4,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using BookBoowingApp.Domain.Common;
+using BookBoowingApp.Domain.Enums;
 using BookBorrowingApp.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -69,9 +70,9 @@ IConfiguration configuration) : IAuthRepository
             }
 
             // Assign User Role to user
-            if (await _roleManager.RoleExistsAsync("User"))
+            if (await _roleManager.RoleExistsAsync(UserRole.User.ToString()))
             {
-                await _userManager.AddToRoleAsync(applicationUser, "User");
+                await _userManager.AddToRoleAsync(applicationUser, UserRole.User.ToString());
             }
 
             return result;

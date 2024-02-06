@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookBorrowingApp.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240118130803_RefectorCode")]
+    [Migration("20240206080831_RefectorCode")]
     partial class RefectorCode
     {
         /// <inheritdoc />
@@ -19,6 +19,135 @@ namespace BookBorrowingApp.Application.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
+
+            modelBuilder.Entity("BookBoowingApp.Domain.Entities.Agreement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("BikeId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("BikeOwnerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Duration")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsAcceptedByUser")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TotalCost")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Agreements");
+                });
+
+            modelBuilder.Entity("BookBoowingApp.Domain.Entities.Bike", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CoverImage")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("CurrentBikeStatus")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("FuelCapacity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FuelEconomy")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Images")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsAvailableForRent")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsRequestForReturn")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("LateFeesPerDay")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Maker")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("Owner")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RentalPricePerDay")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Bikes");
+                });
+
+            modelBuilder.Entity("BookBoowingApp.Domain.Entities.BikeRating", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("BikeId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Review")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BikeRatings");
+                });
 
             modelBuilder.Entity("BookBorrowingApp.Domain.Entities.ApplicationUser", b =>
                 {
@@ -97,6 +226,29 @@ namespace BookBorrowingApp.Application.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "454bb7a8-8a10-4ade-9c50-4fe142151709",
+                            AccessFailedCount = 0,
+                            Books_Borrowed = "[]",
+                            Books_Lent = "[]",
+                            ConcurrencyStamp = "a65a4136-6ccc-457e-b01e-bb81152b0aec",
+                            Email = "super_admin@admin.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            Name = "Super Admin",
+                            NormalizedEmail = "SUPER_ADMIN@ADMIN.COM",
+                            NormalizedUserName = "SUPER_ADMIN",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFugXlwBRzaBKrRn2W4at4JnJbX6BnYkBRY326nI4YkAcy0CloFWoHnziNmmMLuMhw==",
+                            PhoneNumber = "1111111111",
+                            PhoneNumberConfirmed = true,
+                            SecurityStamp = "23644ade-5b93-4b14-9dc7-5d9ce2f846b9",
+                            Tokens_Available = 1000000,
+                            TwoFactorEnabled = false,
+                            UserName = "super_admin"
+                        });
                 });
 
             modelBuilder.Entity("BookBorrowingApp.Domain.Entities.Book", b =>
@@ -109,7 +261,14 @@ namespace BookBorrowingApp.Application.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("Currently_Borrowed_By_User_Id")
+                    b.Property<string>("CoverImage")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("Currently_Borrowed_By_User_Id")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
@@ -120,10 +279,20 @@ namespace BookBorrowingApp.Application.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Images")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("Is_Book_Available")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid>("Lent_By_User_id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Rating")
@@ -162,22 +331,19 @@ namespace BookBorrowingApp.Application.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4b33dab2-d6ea-4f1b-8a80-40469814555b",
-                            ConcurrencyStamp = "1",
+                            Id = "4c43d3e0-844e-46cc-99a6-8922ee551af6",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "e6b49bfa-e92a-40ce-b792-2cf1e13ea13b",
-                            ConcurrencyStamp = "2",
+                            Id = "c034d3fe-626d-40d8-aeb7-d93ef01f8b72",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "b23ccc72-1cf2-48f7-b65b-60b448f0c490",
-                            ConcurrencyStamp = "3",
+                            Id = "23df1398-8186-431b-8a42-7c983d4a5ebf",
                             Name = "Test",
                             NormalizedName = "TEST"
                         });
@@ -264,6 +430,13 @@ namespace BookBorrowingApp.Application.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "454bb7a8-8a10-4ade-9c50-4fe142151709",
+                            RoleId = "4c43d3e0-844e-46cc-99a6-8922ee551af6"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

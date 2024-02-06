@@ -1,4 +1,5 @@
 using BookBoowingApp.Domain.Entities;
+using BookBoowingApp.Domain.Enums;
 using BookBorrowingApp.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -29,9 +30,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         builder.Entity<IdentityRole>().HasData
         (
             // Seed Roles to Database
-            new IdentityRole() { Id = adminRoleId, Name = "Admin", NormalizedName = "ADMIN" },
-            new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = "User", NormalizedName = "USER" },
-            new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = "Test", NormalizedName = "TEST" }
+            new IdentityRole() { Id = adminRoleId, Name = UserRole.Admin.ToString(), NormalizedName = "ADMIN" },
+            new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = UserRole.User.ToString(), NormalizedName = "USER" },
+            new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = UserRole.Test.ToString(), NormalizedName = "TEST" }
         );
     }
 

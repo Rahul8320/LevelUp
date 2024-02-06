@@ -227,21 +227,21 @@ namespace BookBorrowingApp.Application.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5d074a2d-7b00-4156-8636-f3a9e6cc692b",
+                            Id = "454bb7a8-8a10-4ade-9c50-4fe142151709",
                             AccessFailedCount = 0,
                             Books_Borrowed = "[]",
                             Books_Lent = "[]",
-                            ConcurrencyStamp = "265ae577-9117-45aa-8c52-ad8a8a30ac91",
+                            ConcurrencyStamp = "a65a4136-6ccc-457e-b01e-bb81152b0aec",
                             Email = "super_admin@admin.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Super Admin",
                             NormalizedEmail = "SUPER_ADMIN@ADMIN.COM",
                             NormalizedUserName = "SUPER_ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFSxIXtcfkLgQAT1TEJF7GNbTC0nychqncB2nlBxLI89ZVFLjncvhE/qfDzL0T0RdA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFugXlwBRzaBKrRn2W4at4JnJbX6BnYkBRY326nI4YkAcy0CloFWoHnziNmmMLuMhw==",
                             PhoneNumber = "1111111111",
                             PhoneNumberConfirmed = true,
-                            SecurityStamp = "a61f1b3e-b05f-4f2a-a7cd-a2dfaaa97d86",
+                            SecurityStamp = "23644ade-5b93-4b14-9dc7-5d9ce2f846b9",
                             Tokens_Available = 1000000,
                             TwoFactorEnabled = false,
                             UserName = "super_admin"
@@ -328,19 +328,19 @@ namespace BookBorrowingApp.Application.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "dd480c93-5329-45d3-8269-ac2582a70f81",
+                            Id = "4c43d3e0-844e-46cc-99a6-8922ee551af6",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "41329b3d-4536-40b4-8fc3-50af5d86affe",
+                            Id = "c034d3fe-626d-40d8-aeb7-d93ef01f8b72",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "25bb5472-ad64-47ca-a605-06f0b78c5687",
+                            Id = "23df1398-8186-431b-8a42-7c983d4a5ebf",
                             Name = "Test",
                             NormalizedName = "TEST"
                         });
@@ -431,8 +431,8 @@ namespace BookBorrowingApp.Application.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "5d074a2d-7b00-4156-8636-f3a9e6cc692b",
-                            RoleId = "dd480c93-5329-45d3-8269-ac2582a70f81"
+                            UserId = "454bb7a8-8a10-4ade-9c50-4fe142151709",
+                            RoleId = "4c43d3e0-844e-46cc-99a6-8922ee551af6"
                         });
                 });
 
