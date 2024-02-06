@@ -14,18 +14,16 @@ public interface IBikeService
     /// Add new bike to database.
     /// </summary>
     /// <param name="bikeModel">New bike details.</param>
-    /// <param name="userId">User id</param>
     /// <returns>Returns the newly created bike id.</returns>
-    Task<ServiceResult<Guid>> CreateNewBike(AddBikeModel bikeModel, Guid userId);
+    Task<ServiceResult<Guid>> CreateNewBike(AddBikeModel bikeModel);
 
     /// <summary>
     /// Update existing bike details.
     /// </summary>
     /// <param name="bikeId">The bike id.</param>
     /// <param name="bikeModel">The update bike details.</param>
-    /// <param name="userId">User id</param>
     /// <returns>Returns updated bike data.</returns>
-    Task<ServiceResult<Bike>> UpdateExistingBike(Guid bikeId, AddBikeModel bikeModel, Guid userId);
+    Task<ServiceResult<Bike>> UpdateExistingBike(Guid bikeId, AddBikeModel bikeModel);
 
     /// <summary>
     /// Update bike availability status
@@ -49,9 +47,8 @@ public interface IBikeService
     /// Delete bike from database.
     /// </summary>
     /// <param name="bikeId">The bike id.</param>
-    /// <param name="userId">User id.</param>
     /// <returns>Returns service result indication delete operation result.</returns>
-    Task<ServiceResult> DeleteBike(Guid bikeId, Guid userId);
+    Task<ServiceResult> DeleteBike(Guid bikeId);
 
     /// <summary>
     /// Get bike details by id.

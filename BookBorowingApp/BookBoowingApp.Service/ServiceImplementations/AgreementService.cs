@@ -341,7 +341,7 @@ public class AgreementService(IUnitOfWork unitOfWork) : IAgreementService
         }
     }
 
-    public Task<ServiceResult<Agreement>> UpdateRequestForReturnStatus()
+    public Task<ServiceResult<Agreement>> UpdateIsAcceptedStatus()
     {
         throw new NotImplementedException();
     }

@@ -3,6 +3,8 @@ using BookBoowingApp.Domain.Common;
 using BookBoowingApp.Domain.Entities;
 using BookBoowingApp.Domain.Enums;
 using BookBoowingApp.Infrastructure.IRepositories;
+using BookBoowingApp.Service.DTOs;
+using BookBoowingApp.Service.IServices;
 using BookBoowingApp.Service.Models;
 using BookBoowingApp.Service.ServiceImplementations;
 using FakeItEasy;
@@ -13,27 +15,33 @@ namespace BookBorrowingApp.UnitTests.ServiceTests;
 public class BikeServiceTests
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthService _authService;
     private readonly BikeService _bikeService;
     public BikeServiceTests()
     {
         // Dependency
         _unitOfWork = A.Fake<IUnitOfWork>();
+        _authService = A.Fake<IAuthService>();
 
         // SUT
-        _bikeService = new BikeService(_unitOfWork);
+        _bikeService = new BikeService(_unitOfWork, _authService);
     }
 
     [Fact]
     public async void BikeService_CreateNewBike_ReturnsGuid()
     {
         // Arrange
-        var addBikeModel = A.Fake<AddBikeModel>();
         var userId = Guid.NewGuid();
+        var addBikeModel = A.Fake<AddBikeModel>();
+        var userData = A.Fake<AuthenticatedUserDTO>();
+        userData.UserId = userId.ToString();
+        userData.Role = UserRole.Admin.ToString();
 
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).Returns(userData);
         A.CallTo(() => _unitOfWork.Complete()).Returns(true);
 
         // Act
-        var result = await _bikeService.CreateNewBike(addBikeModel, userId);
+        var result = await _bikeService.CreateNewBike(addBikeModel);
 
         // Assert
         result.Should().NotBeNull();
@@ -41,10 +49,43 @@ public class BikeServiceTests
         result.StatusCode.Should().Be(HttpStatusCode.Created);
         result.Message.Should().BeNull();
         result.ValidationError.Should().BeNull();
+
         result.Data.Should().NotBe(Guid.Empty);
         result.Data.Should().NotBeEmpty();
 
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.Complete()).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async void BikeService_CreateNewBike_ReturnsForbidden()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var addBikeModel = A.Fake<AddBikeModel>();
+        var userData = A.Fake<AuthenticatedUserDTO>();
+        userData.UserId = userId.ToString();
+        userData.Role = UserRole.User.ToString();
+
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).Returns(userData);
+        A.CallTo(() => _unitOfWork.Complete()).Returns(true);
+
+        // Act
+        var result = await _bikeService.CreateNewBike(addBikeModel);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult<Guid>>();
+        result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        result.Message.Should().BeNull();
+        result.ValidationError.Should().NotBeNull();
+        result.ValidationError.Code.Should().Be("PermissionDenied");
+        result.ValidationError.Description.Should().Be("You don't have permission to perform this operation!");
+
+        result.Data.Should().BeEmpty();
+
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _unitOfWork.Complete()).MustNotHaveHappened();
     }
 
     [Fact]
@@ -55,13 +96,17 @@ public class BikeServiceTests
         var bikeId = Guid.NewGuid();
         var bike = A.Fake<Bike>();
         bike.Owner = userId;
+        var userData = A.Fake<AuthenticatedUserDTO>();
+        userData.UserId = userId.ToString();
+        userData.Role = UserRole.Admin.ToString();
 
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).Returns(userData);
         A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).Returns(bike);
         A.CallTo(() => _unitOfWork.BikeRepository.Delete(bike));
         A.CallTo(() => _unitOfWork.Complete()).Returns(true);
 
         // Act
-        var result = await _bikeService.DeleteBike(bikeId, userId);
+        var result = await _bikeService.DeleteBike(bikeId);
 
         // Assert
         result.Should().NotBeNull();
@@ -70,33 +115,76 @@ public class BikeServiceTests
         result.Message.Should().BeNull();
         result.ValidationError.Should().BeNull();
 
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.BikeRepository.Delete(bike)).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.Complete()).MustHaveHappenedOnceExactly();
     }
 
     [Fact]
-    public async void BikeService_DeleteBike_ReturnsForbidden()
+    public async void BikeService_DeleteBike_ReturnsForbidden_ForUserRole()
     {
         // Arrange
         var userId = Guid.NewGuid();
         var bikeId = Guid.NewGuid();
         var bike = A.Fake<Bike>();
+        var userData = A.Fake<AuthenticatedUserDTO>();
+        userData.UserId = userId.ToString();
+        userData.Role = UserRole.User.ToString();
 
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).Returns(userData);
         A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).Returns(bike);
         A.CallTo(() => _unitOfWork.BikeRepository.Delete(bike));
         A.CallTo(() => _unitOfWork.Complete()).Returns(true);
 
         // Act
-        var result = await _bikeService.DeleteBike(bikeId, userId);
+        var result = await _bikeService.DeleteBike(bikeId);
 
         // Assert
         result.Should().NotBeNull();
         result.Should().BeOfType<ServiceResult>();
         result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         result.Message.Should().BeNull();
-        result.ValidationError.Should().BeNull();
+        result.ValidationError.Should().NotBeNull();
+        result.ValidationError.Code.Should().Be("PermissionDenied");
+        result.ValidationError.Description.Should().Be("You don't have permission to perform this operation!");
 
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).MustNotHaveHappened();
+        A.CallTo(() => _unitOfWork.BikeRepository.Delete(bike)).MustNotHaveHappened();
+        A.CallTo(() => _unitOfWork.Complete()).MustNotHaveHappened();
+    }
+
+    [Fact]
+    public async void BikeService_DeleteBike_ReturnsForbidden_ForNotBikeOwner()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var bikeId = Guid.NewGuid();
+        var bike = A.Fake<Bike>();
+        bike.Owner = Guid.NewGuid();
+        var userData = A.Fake<AuthenticatedUserDTO>();
+        userData.UserId = userId.ToString();
+        userData.Role = UserRole.Admin.ToString();
+
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).Returns(userData);
+        A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).Returns(bike);
+        A.CallTo(() => _unitOfWork.BikeRepository.Delete(bike));
+        A.CallTo(() => _unitOfWork.Complete()).Returns(true);
+
+        // Act
+        var result = await _bikeService.DeleteBike(bikeId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult>();
+        result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        result.Message.Should().BeNull();
+        result.ValidationError.Should().NotBeNull();
+        result.ValidationError.Code.Should().Be("PermissionDenied");
+        result.ValidationError.Description.Should().Be("You don't have permission to perform this operation!");
+
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.BikeRepository.Delete(bike)).MustNotHaveHappened();
         A.CallTo(() => _unitOfWork.Complete()).MustNotHaveHappened();
@@ -109,21 +197,28 @@ public class BikeServiceTests
         var userId = Guid.NewGuid();
         var bikeId = Guid.Empty;
         var bike = A.Fake<Bike>();
+        var userData = A.Fake<AuthenticatedUserDTO>();
+        userData.UserId = userId.ToString();
+        userData.Role = UserRole.Admin.ToString();
 
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).Returns(userData);
         A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId))!.Returns(Task.FromResult<Bike>(null!));
         A.CallTo(() => _unitOfWork.BikeRepository.Delete(bike));
         A.CallTo(() => _unitOfWork.Complete()).Returns(true);
 
         // Act
-        var result = await _bikeService.DeleteBike(bikeId, userId);
+        var result = await _bikeService.DeleteBike(bikeId);
 
         // Assert
         result.Should().NotBeNull();
         result.Should().BeOfType<ServiceResult>();
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
         result.Message.Should().BeNull();
-        result.ValidationError.Should().BeNull();
+        result.ValidationError.Should().NotBeNull();
+        result.ValidationError.Code.Should().Be("BikeNotFound");
+        result.ValidationError.Description.Should().Be($"Requested bike with id: {bikeId} is not found!");
 
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.BikeRepository.Delete(bike)).MustNotHaveHappened();
         A.CallTo(() => _unitOfWork.Complete()).MustNotHaveHappened();
@@ -140,13 +235,17 @@ public class BikeServiceTests
         bike.Id = bikeId;
         bike.Owner = userId;
         var currentDateTime = DateTime.UtcNow;
+        var userData = A.Fake<AuthenticatedUserDTO>();
+        userData.UserId = userId.ToString();
+        userData.Role = UserRole.Admin.ToString();
 
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).Returns(userData);
         A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).Returns(bike);
         A.CallTo(() => _unitOfWork.BikeRepository.Update(bike));
         A.CallTo(() => _unitOfWork.Complete()).Returns(true);
 
         // Act
-        var result = await _bikeService.UpdateExistingBike(bikeId, addBikeModel, userId);
+        var result = await _bikeService.UpdateExistingBike(bikeId, addBikeModel);
 
         // Assert
         result.Should().NotBeNull();
@@ -160,27 +259,32 @@ public class BikeServiceTests
         result.Data.Owner.Should().Be(userId);
         result.Data.LastUpdated.Should().BeAfter(currentDateTime);
 
-
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.BikeRepository.Update(bike)).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.Complete()).MustHaveHappenedOnceExactly();
     }
 
     [Fact]
-    public async void BikeService_UpdateExistingBike_ReturnsForbidden()
+    public async void BikeService_UpdateExistingBike_ReturnsForbidden_ForUserRole()
     {
         // Arrange
         var bikeId = Guid.NewGuid();
         var addBikeModel = A.Fake<AddBikeModel>();
         var userId = Guid.NewGuid();
         var bike = A.Fake<Bike>();
+        bike.Owner = Guid.NewGuid();
+        var userData = A.Fake<AuthenticatedUserDTO>();
+        userData.UserId = userId.ToString();
+        userData.Role = UserRole.User.ToString();
 
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).Returns(userData);
         A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).Returns(bike);
         A.CallTo(() => _unitOfWork.BikeRepository.Update(bike));
         A.CallTo(() => _unitOfWork.Complete()).Returns(true);
 
         // Act
-        var result = await _bikeService.UpdateExistingBike(bikeId, addBikeModel, userId);
+        var result = await _bikeService.UpdateExistingBike(bikeId, addBikeModel);
 
         // Assert
         // Assert
@@ -188,8 +292,48 @@ public class BikeServiceTests
         result.Should().BeOfType<ServiceResult<Bike>>();
         result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         result.Message.Should().BeNull();
-        result.ValidationError.Should().BeNull();
+        result.ValidationError.Should().NotBeNull();
+        result.ValidationError.Code.Should().Be("PermissionDenied");
+        result.ValidationError.Description.Should().Be("You don't have permission to perform this operation!");
 
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).MustNotHaveHappened();
+        A.CallTo(() => _unitOfWork.BikeRepository.Update(bike)).MustNotHaveHappened();
+        A.CallTo(() => _unitOfWork.Complete()).MustNotHaveHappened();
+    }
+
+    [Fact]
+    public async void BikeService_UpdateExistingBike_ReturnsForbidden_ForNotBikeOwner()
+    {
+        // Arrange
+        var bikeId = Guid.NewGuid();
+        var addBikeModel = A.Fake<AddBikeModel>();
+        var userId = Guid.NewGuid();
+        var bike = A.Fake<Bike>();
+        bike.Owner = Guid.NewGuid();
+        var userData = A.Fake<AuthenticatedUserDTO>();
+        userData.UserId = userId.ToString();
+        userData.Role = UserRole.Admin.ToString();
+
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).Returns(userData);
+        A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).Returns(bike);
+        A.CallTo(() => _unitOfWork.BikeRepository.Update(bike));
+        A.CallTo(() => _unitOfWork.Complete()).Returns(true);
+
+        // Act
+        var result = await _bikeService.UpdateExistingBike(bikeId, addBikeModel);
+
+        // Assert
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ServiceResult<Bike>>();
+        result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        result.Message.Should().BeNull();
+        result.ValidationError.Should().NotBeNull();
+        result.ValidationError.Code.Should().Be("PermissionDenied");
+        result.ValidationError.Description.Should().Be("You don't have permission to perform this operation!");
+
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.BikeRepository.Update(bike)).MustNotHaveHappened();
         A.CallTo(() => _unitOfWork.Complete()).MustNotHaveHappened();
@@ -204,13 +348,17 @@ public class BikeServiceTests
         var userId = Guid.NewGuid();
         var bike = A.Fake<Bike>();
         bike.Owner = userId;
+        var userData = A.Fake<AuthenticatedUserDTO>();
+        userData.UserId = userId.ToString();
+        userData.Role = UserRole.Admin.ToString();
 
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).Returns(userData);
         A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId))!.Returns(Task.FromResult<Bike>(null!));
         A.CallTo(() => _unitOfWork.BikeRepository.Update(bike));
         A.CallTo(() => _unitOfWork.Complete()).Returns(true);
 
         // Act
-        var result = await _bikeService.UpdateExistingBike(bikeId, addBikeModel, userId);
+        var result = await _bikeService.UpdateExistingBike(bikeId, addBikeModel);
 
         // Assert
         // Assert
@@ -218,8 +366,11 @@ public class BikeServiceTests
         result.Should().BeOfType<ServiceResult<Bike>>();
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
         result.Message.Should().BeNull();
-        result.ValidationError.Should().BeNull();
+        result.ValidationError.Should().NotBeNull();
+        result.ValidationError.Code.Should().Be("BikeNotFound");
+        result.ValidationError.Description.Should().Be($"Requested bike with id: {bikeId} is not found!");
 
+        A.CallTo(() => _authService.GetAuthenticatedUserData()).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.BikeRepository.Get(bikeId)).MustHaveHappenedOnceExactly();
         A.CallTo(() => _unitOfWork.BikeRepository.Update(bike)).MustNotHaveHappened();
         A.CallTo(() => _unitOfWork.Complete()).MustNotHaveHappened();

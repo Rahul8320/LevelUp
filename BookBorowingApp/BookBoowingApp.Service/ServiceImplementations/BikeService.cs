@@ -13,7 +13,7 @@ namespace BookBoowingApp.Service.ServiceImplementations;
 /// Represent the implementation of the bike service interface.
 /// </summary>
 /// <param name="unitOfWork">The unit of work interface.</param>
-public class BikeService(IUnitOfWork unitOfWork) : IBikeService
+public class BikeService(IUnitOfWork unitOfWork, IAuthService authService) : IBikeService
 {
     /// <summary>
     /// Represents unit of work interface.
@@ -21,21 +21,39 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     /// <summary>
+    /// Represents the auth service interface.
+    /// </summary>
+    private readonly IAuthService _authService = authService;
+
+    /// <summary>
     /// Create new bike.
     /// </summary>
     /// <param name="bikeModel">The bike details.</param>
-    /// <param name="userId">The user id.</param>
     /// <returns>Returns the newly created bike id.</returns>
     /// <exception cref="ApiException">The api exception.</exception>
-    public async Task<ServiceResult<Guid>> CreateNewBike(AddBikeModel bikeModel, Guid userId)
+    public async Task<ServiceResult<Guid>> CreateNewBike(AddBikeModel bikeModel)
     {
         try
         {
+            // Get logged in user data
+            var userData = _authService.GetAuthenticatedUserData();
+
+            // Check for admin role
+            if (userData.Role != UserRole.Admin.ToString())
+            {
+                return new ServiceResult<Guid>(
+                    HttpStatusCode.Forbidden,
+                    new ValidationError(
+                        code: "PermissionDenied",
+                        description: "You don't have permission to perform this operation!")
+                );
+            }
+
             // Create new bike entity.
             var newBike = new Bike()
             {
                 Id = Guid.NewGuid(),
-                Owner = userId,
+                Owner = Guid.Parse(userData.UserId!),
                 CoverImage = bikeModel.CoverImage,
                 Images = bikeModel.Images,
                 Description = bikeModel.Description,
@@ -79,26 +97,49 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
     /// Delete an existing bike.
     /// </summary>
     /// <param name="bikeId">The bike id.</param>
-    /// <param name="userId">The user id.</param>
     /// <returns>Returns the service result indicating this delete operation result.</returns>
     /// <exception cref="ApiException">The api exception.</exception>
-    public async Task<ServiceResult> DeleteBike(Guid bikeId, Guid userId)
+    public async Task<ServiceResult> DeleteBike(Guid bikeId)
     {
         try
         {
+            // Get logged in user data
+            var userData = _authService.GetAuthenticatedUserData();
+
+            // Check for admin role
+            if (userData.Role != UserRole.Admin.ToString())
+            {
+                return new ServiceResult(
+                    HttpStatusCode.Forbidden,
+                    new ValidationError(
+                        code: "PermissionDenied",
+                        description: "You don't have permission to perform this operation!")
+                );
+            }
+
             // Fetch bike data
             var existingBike = await _unitOfWork.BikeRepository.Get(bikeId);
 
             // Check for bike is exists or not.
             if (existingBike == null)
             {
-                return new ServiceResult(HttpStatusCode.NotFound);
+                return new ServiceResult(
+                    HttpStatusCode.NotFound,
+                    new ValidationError(
+                        code: "BikeNotFound",
+                        description: $"Requested bike with id: {bikeId} is not found!")
+                );
             }
 
             // Check the owner of the bike is same as user id.
-            if (existingBike.Owner != userId)
+            if (existingBike.Owner != Guid.Parse(userData.UserId!))
             {
-                return new ServiceResult(HttpStatusCode.Forbidden);
+                return new ServiceResult(
+                    HttpStatusCode.Forbidden,
+                    new ValidationError(
+                        code: "PermissionDenied",
+                        description: "You don't have permission to perform this operation!")
+                );
             }
 
             // Delete the existing bike
@@ -129,26 +170,47 @@ public class BikeService(IUnitOfWork unitOfWork) : IBikeService
     /// </summary>
     /// <param name="bikeId">The bike id.</param>
     /// <param name="bikeModel">The update bike details.</param>
-    /// <param name="userId">The user id.</param>
     /// <returns>Returns update bike data.</returns>
     /// <exception cref="ApiException">The api exception.</exception>
-    public async Task<ServiceResult<Bike>> UpdateExistingBike(Guid bikeId, AddBikeModel bikeModel, Guid userId)
+    public async Task<ServiceResult<Bike>> UpdateExistingBike(Guid bikeId, AddBikeModel bikeModel)
     {
         try
         {
+            // Get logged in user data
+            var userData = _authService.GetAuthenticatedUserData();
+
+            // Check for admin role
+            if (userData.Role != UserRole.Admin.ToString())
+            {
+                return new ServiceResult<Bike>(
+                    HttpStatusCode.Forbidden,
+                    new ValidationError(code: "PermissionDenied", description: "You don't have permission to perform this operation!")
+                );
+            }
+
             // Fetch bike data
             var existingBike = await _unitOfWork.BikeRepository.Get(bikeId);
 
             // Check for bike is exists or not.
             if (existingBike == null)
             {
-                return new ServiceResult<Bike>(HttpStatusCode.NotFound);
+                return new ServiceResult<Bike>(
+                    HttpStatusCode.NotFound,
+                    new ValidationError(
+                        code: "BikeNotFound",
+                        description: $"Requested bike with id: {bikeId} is not found!")
+                );
             }
 
             // Check the owner of the bike is same as user id.
-            if (existingBike.Owner != userId)
+            if (existingBike.Owner != Guid.Parse(userData.UserId!))
             {
-                return new ServiceResult<Bike>(HttpStatusCode.Forbidden);
+                return new ServiceResult<Bike>(
+                   HttpStatusCode.Forbidden,
+                   new ValidationError(
+                       code: "PermissionDenied",
+                       description: "You don't have permission to perform this operation!")
+               );
             }
 
             // Update the bike details.

@@ -26,7 +26,7 @@ public interface IAgreementService
     /// <returns>Returns updated agreement details.</returns>
     Task<ServiceResult<Agreement>> UpdateExistingAgreement(Guid agreementId, AddAgreementModel agreementModel, Guid userId);
 
-    Task<ServiceResult<Agreement>> UpdateRequestForReturnStatus();
+    Task<ServiceResult<Agreement>> UpdateIsAcceptedStatus();
 
     /// <summary>
     /// Delete an agreement.
