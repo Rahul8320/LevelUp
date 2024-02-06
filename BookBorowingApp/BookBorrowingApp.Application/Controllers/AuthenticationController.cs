@@ -1,20 +1,43 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Net.Mime;
 using BookBoowingApp.Domain.Common;
 using BookBoowingApp.Service.IServices;
 using BookBoowingApp.Service.Models;
+using BookBorrowingApp.Application.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookBorrowingApp.Application.Controllers;
 
+/// <summary>
+/// Auth api controller.
+/// </summary>
+/// <param name="authService">The auth service interface</param>
 [ApiController]
 [Route("api/[controller]")]
-public class AuthenticationController(IAuthService authService) : ControllerBase
+public class AuthenticationController(IAuthService authService, IHttpContextAccessor httpContextAccessor) : ControllerBase
 {
+    /// <summary>
+    /// Represents the auth service interface.
+    /// </summary>
     private readonly IAuthService _authService = authService;
 
+    /// <summary>
+    /// Represents auth helper.
+    /// </summary>
+    private readonly AuthHelper _authHelper = new(httpContextAccessor);
+
+    /// <summary>
+    /// Register new user
+    /// </summary>
+    /// <param name="registerUser">The register user data.</param>
+    /// <returns>Returns result of the register action.</returns>
+    /// <exception cref="ApiException">The api exception</exception>
     [HttpPost]
     [Route("register")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json)]
     public async Task<IActionResult> Register([FromBody] RegisterUser registerUser)
     {
         try
@@ -51,8 +74,16 @@ public class AuthenticationController(IAuthService authService) : ControllerBase
 
     }
 
+    /// <summary>
+    /// Login user.
+    /// </summary>
+    /// <param name="loginUser">The login user model.</param>
+    /// <returns>Returns the result of this login action.</returns>
+    /// <exception cref="ApiException">The api exception.</exception>
     [HttpPost]
     [Route("login")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json)]
     public async Task<IActionResult> Login([FromBody] LoginUser loginUser)
     {
         try
@@ -76,6 +107,27 @@ public class AuthenticationController(IAuthService authService) : ControllerBase
                 token = new JwtSecurityTokenHandler().WriteToken(response.Data),
                 expiration = response.Data.ValidTo
             });
+        }
+        catch (ApiException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
+    }
+
+    [HttpGet]
+    [Route("verify")]
+    [Authorize]
+    public IActionResult Verify()
+    {
+        try
+        {
+            var data = _authHelper.GetUserData();
+
+            return Ok(data);
         }
         catch (ApiException)
         {

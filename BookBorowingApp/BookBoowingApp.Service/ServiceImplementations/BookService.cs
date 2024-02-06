@@ -52,7 +52,7 @@ public class BookService(IBookRepository bookRepository,
                 CoverImage = bookModel.CoverImage,
                 Genre = bookModel.Genre,
                 Is_Book_Available = true,
-                Lent_By_User_id = Guid.Parse(userData.Id!),
+                Lent_By_User_id = Guid.Parse(userData.UserId!),
                 Currently_Borrowed_By_User_Id = null,
                 Images = bookModel.Images,
                 CreatedAt = DateTime.UtcNow,
@@ -253,7 +253,7 @@ public class BookService(IBookRepository bookRepository,
         var claims = claimsIdentity?.Claims;
 
         authenticatedUserDTO.Email = claims?.FirstOrDefault(Item => Item.Type == ClaimTypes.Email)?.Value;
-        authenticatedUserDTO.Id = claims?.FirstOrDefault(item => item.Type == ClaimTypes.GivenName)?.Value;
+        authenticatedUserDTO.UserId = claims?.FirstOrDefault(item => item.Type == ClaimTypes.GivenName)?.Value;
         authenticatedUserDTO.UserName = claims?.FirstOrDefault(item => item.Type == ClaimTypes.Name)?.Value;
 
         return authenticatedUserDTO;
