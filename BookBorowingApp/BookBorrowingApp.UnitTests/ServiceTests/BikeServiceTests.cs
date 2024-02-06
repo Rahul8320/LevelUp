@@ -486,7 +486,9 @@ public class BikeServiceTests
         result.Should().BeOfType<ServiceResult<Bike>>();
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
         result.Message.Should().BeNull();
-        result.ValidationError.Should().BeNull();
+        result.ValidationError.Should().NotBeNull();
+        result.ValidationError.Code.Should().Be("BikeNotFound");
+        result.ValidationError.Description.Should().Be($"Requested bike with id: {bikeId} is not found!");
 
         result.Data.Should().BeNull();
 

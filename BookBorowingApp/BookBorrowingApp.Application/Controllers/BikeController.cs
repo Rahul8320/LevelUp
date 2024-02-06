@@ -195,4 +195,88 @@ public class BikeController(IBikeService bikeService) : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Get all available bikes.
+    /// </summary>
+    /// <param name="maker">The bike maker</param>
+    /// <param name="model">The bike model</param>
+    /// <param name="price">The bike price</param>
+    /// <returns>Returns action result</returns>
+    /// <exception cref="ApiException">The api exception</exception>
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Bike))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorResponse))]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(string))]
+    [Produces(MediaTypeNames.Application.Json)]
+    public async Task<IActionResult> GetAvailableBike([FromQuery] string? maker = null, [FromQuery] string? model = null, [FromQuery] int? price = null)
+    {
+        try
+        {
+            // search bikes
+            var response = await _bikeService.GetAllAvailableBike(maker, model, price);
+
+            // check or success response.
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return Ok(response.Data);
+            }
+
+            return StatusCode((int)response.StatusCode);
+        }
+        catch (ApiException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
+    }
+
+    /// <summary>
+    /// Get bike details by it's id.
+    /// </summary>
+    /// <param name="id">The bike id.</param>
+    /// <returns>Returns action result.</returns>
+    /// <exception cref="ApiException">The api exception.</exception>
+    [HttpGet]
+    [Route("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Bike))]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFound))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorResponse))]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(string))]
+    [Produces(MediaTypeNames.Application.Json)]
+    public async Task<IActionResult> GetBikeDetails(Guid id)
+    {
+        try
+        {
+            // search bikes
+            var response = await _bikeService.GetBikeDetails(id);
+
+            // check for not found response
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return NotFound(response.ValidationError);
+            }
+
+            // check or success response.
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return Ok(response.Data);
+            }
+
+            return StatusCode((int)response.StatusCode);
+        }
+        catch (ApiException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
+    }
+
 }

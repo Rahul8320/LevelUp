@@ -260,24 +260,32 @@ public class BikeService(IUnitOfWork unitOfWork, IAuthService authService) : IBi
     {
         try
         {
+            // Fetch all bikes data
             var allBikes = await _unitOfWork.BikeRepository.GetAll();
 
+            // Check maker is null or not
             if (!maker.IsNullOrEmpty())
             {
-                allBikes = allBikes.Where(b => b.Maker.Contains(maker!));
+                allBikes = allBikes.Where(b => b.Maker.Contains(maker!, StringComparison.OrdinalIgnoreCase));
             }
 
+            // Check model is null or not
             if (!model.IsNullOrEmpty())
             {
-                allBikes = allBikes.Where(b => b.Model.Contains(model!));
+                allBikes = allBikes.Where(b => b.Model.Contains(model!, StringComparison.OrdinalIgnoreCase));
             }
 
+            // check price is null or not
             if (price.HasValue)
             {
                 allBikes = allBikes.Where(b => b.RentalPricePerDay == price);
             }
 
             return new ServiceResult<List<Bike>>(HttpStatusCode.OK, allBikes.ToList());
+        }
+        catch (ApiException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
@@ -295,14 +303,25 @@ public class BikeService(IUnitOfWork unitOfWork, IAuthService authService) : IBi
     {
         try
         {
+            // fetch bike details
             var bike = await _unitOfWork.BikeRepository.Get(bikeId);
 
+            // check for bike is exists or not.
             if (bike == null)
             {
-                return new ServiceResult<Bike>(HttpStatusCode.NotFound);
+                return new ServiceResult<Bike>(
+                   HttpStatusCode.NotFound,
+                   new ValidationError(
+                       code: "BikeNotFound",
+                       description: $"Requested bike with id: {bikeId} is not found!")
+               );
             }
 
             return new ServiceResult<Bike>(HttpStatusCode.OK, bike);
+        }
+        catch (ApiException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
