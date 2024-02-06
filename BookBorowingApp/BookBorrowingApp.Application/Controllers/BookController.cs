@@ -118,9 +118,9 @@ public class BookController(IBookService bookService) : ControllerBase
     [HttpPost]
     [Authorize]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(201, Type = typeof(Book))]
-    [ProducesResponseType(400, Type = typeof(BadRequest))]
-    [ProducesResponseType(500, Type = typeof(ErrorResponse))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Book))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequest))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorResponse))]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [Produces(MediaTypeNames.Application.Json)]
@@ -131,7 +131,7 @@ public class BookController(IBookService bookService) : ControllerBase
             // Check for model validation.
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
 
             // Creating new book.
@@ -242,7 +242,7 @@ public class BookController(IBookService bookService) : ControllerBase
     {
         try
         {
-            // Updated the book details.
+            // Delete the existing book.
             var response = await _bookService.DeleteBookById(id);
 
             // Check for 404 response code.
