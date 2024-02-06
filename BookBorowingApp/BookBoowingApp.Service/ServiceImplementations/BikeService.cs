@@ -263,25 +263,40 @@ public class BikeService(IUnitOfWork unitOfWork, IAuthService authService) : IBi
             // Fetch all bikes data
             var allBikes = await _unitOfWork.BikeRepository.GetAll();
 
+            // check for bikes exists or not
+            if (!allBikes.Any())
+            {
+                return new ServiceResult<List<Bike>>(HttpStatusCode.OK, []);
+            }
+
+            // get all available bikes
+            var availableBikes = allBikes.Where(b => b.IsAvailableForRent == true);
+
+            // check for bikes exists or not
+            if (!availableBikes.Any())
+            {
+                return new ServiceResult<List<Bike>>(HttpStatusCode.OK, []);
+            }
+
             // Check maker is null or not
             if (!maker.IsNullOrEmpty())
             {
-                allBikes = allBikes.Where(b => b.Maker.Contains(maker!, StringComparison.OrdinalIgnoreCase));
+                availableBikes = availableBikes.Where(b => b.Maker.Contains(maker!, StringComparison.OrdinalIgnoreCase));
             }
 
             // Check model is null or not
             if (!model.IsNullOrEmpty())
             {
-                allBikes = allBikes.Where(b => b.Model.Contains(model!, StringComparison.OrdinalIgnoreCase));
+                availableBikes = availableBikes.Where(b => b.Model.Contains(model!, StringComparison.OrdinalIgnoreCase));
             }
 
             // check price is null or not
             if (price.HasValue)
             {
-                allBikes = allBikes.Where(b => b.RentalPricePerDay == price);
+                availableBikes = availableBikes.Where(b => b.RentalPricePerDay == price);
             }
 
-            return new ServiceResult<List<Bike>>(HttpStatusCode.OK, allBikes.ToList());
+            return new ServiceResult<List<Bike>>(HttpStatusCode.OK, availableBikes.ToList());
         }
         catch (ApiException)
         {
