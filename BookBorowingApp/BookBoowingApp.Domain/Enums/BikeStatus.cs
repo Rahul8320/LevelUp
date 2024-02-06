@@ -1,4 +1,4 @@
-namespace BookBoowingApp.Domain.Entities;
+namespace BookBoowingApp.Domain.Enums;
 
 /// <summary>
 /// Represents bike status enum.

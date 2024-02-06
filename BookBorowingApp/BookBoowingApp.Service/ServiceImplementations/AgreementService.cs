@@ -1,6 +1,7 @@
 using System.Net;
 using BookBoowingApp.Domain.Common;
 using BookBoowingApp.Domain.Entities;
+using BookBoowingApp.Domain.Enums;
 using BookBoowingApp.Infrastructure.IRepositories;
 using BookBoowingApp.Service.IServices;
 using BookBoowingApp.Service.Models;
@@ -340,4 +341,8 @@ public class AgreementService(IUnitOfWork unitOfWork) : IAgreementService
         }
     }
 
+    public Task<ServiceResult<Agreement>> UpdateRequestForReturnStatus()
+    {
+        throw new NotImplementedException();
+    }
 }

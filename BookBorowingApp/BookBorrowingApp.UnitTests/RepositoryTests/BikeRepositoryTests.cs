@@ -1,4 +1,5 @@
 using BookBoowingApp.Domain.Entities;
+using BookBoowingApp.Domain.Enums;
 using BookBoowingApp.Infrastructure.DB;
 using BookBoowingApp.Infrastructure.RepositoryImplementations;
 using FluentAssertions;

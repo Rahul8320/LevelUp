@@ -1,3 +1,5 @@
+using BookBoowingApp.Domain.Enums;
+
 namespace BookBoowingApp.Domain.Entities;
 
 /// <summary>

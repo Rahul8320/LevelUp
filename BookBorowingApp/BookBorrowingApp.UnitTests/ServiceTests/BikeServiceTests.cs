@@ -1,6 +1,7 @@
 using System.Net;
 using BookBoowingApp.Domain.Common;
 using BookBoowingApp.Domain.Entities;
+using BookBoowingApp.Domain.Enums;
 using BookBoowingApp.Infrastructure.IRepositories;
 using BookBoowingApp.Service.Models;
 using BookBoowingApp.Service.ServiceImplementations;

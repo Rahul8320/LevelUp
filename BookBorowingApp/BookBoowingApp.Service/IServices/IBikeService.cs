@@ -1,5 +1,6 @@
 using BookBoowingApp.Domain.Common;
 using BookBoowingApp.Domain.Entities;
+using BookBoowingApp.Domain.Enums;
 using BookBoowingApp.Service.Models;
 
 namespace BookBoowingApp.Service.IServices;
