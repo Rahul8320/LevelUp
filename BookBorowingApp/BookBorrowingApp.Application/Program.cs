@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using BookBoowingApp.Infrastructure;
 using BookBoowingApp.Infrastructure.DB;
 using BookBoowingApp.Infrastructure.IRepositories;
@@ -59,7 +60,13 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
+    options.JsonSerializerOptions.DefaultIgnoreCondition =
+        JsonIgnoreCondition.WhenWritingNull;
+});
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
