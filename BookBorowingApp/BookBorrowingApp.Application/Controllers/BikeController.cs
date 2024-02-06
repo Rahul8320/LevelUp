@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Mime;
 using BookBoowingApp.Domain.Common;
+using BookBoowingApp.Domain.Entities;
 using BookBoowingApp.Service.IServices;
 using BookBoowingApp.Service.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -59,7 +60,11 @@ public class BikeController(IBikeService bikeService) : ControllerBase
             // check for created response
             if (response.StatusCode == HttpStatusCode.Created)
             {
-                return Created(new Uri(null!), response.Data);
+                return StatusCode(StatusCodes.Status201Created, new
+                {
+                    response.Data,
+                    response.StatusCode
+                });
             }
 
             // return the response code if anything goes wrong.
@@ -94,7 +99,7 @@ public class BikeController(IBikeService bikeService) : ControllerBase
     {
         try
         {
-            // Delete the existing bike data
+            // Deleting the existing bike data
             var response = await _bikeService.DeleteBike(id);
 
             // check for forbidden response
@@ -127,4 +132,67 @@ public class BikeController(IBikeService bikeService) : ControllerBase
             throw new ApiException(HttpStatusCode.InternalServerError, ex);
         }
     }
+
+    /// <summary>
+    /// Update existing bike data.
+    /// </summary>
+    /// <param name="id">The bike id.</param>
+    /// <param name="bikeModel">The bike model.</param>
+    /// <returns>Returns action result.</returns>
+    /// <exception cref="ApiException">The api exception.</exception>
+    [HttpPut]
+    [Route("{id}")]
+    [Authorize(Roles = "Admin")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Bike))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequest))]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFound))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorResponse))]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(string))]
+    [Produces(MediaTypeNames.Application.Json)]
+    public async Task<IActionResult> UpdateBike(Guid id, [FromBody] AddBikeModel bikeModel)
+    {
+        try
+        {
+            // Check for model validations.
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Updating existing bike data
+            var response = await _bikeService.UpdateExistingBike(id, bikeModel);
+
+            // check for forbidden response
+            if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                return Forbid(response.ValidationError.Description);
+            }
+
+            // Check for 404 response code.
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return NotFound(response.ValidationError);
+            }
+
+            // Check for 200 response code.
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return Ok(response.Data);
+            }
+
+            // return the response code if anything goes wrong.
+            return StatusCode((int)response.StatusCode);
+        }
+        catch (ApiException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
+    }
+
 }

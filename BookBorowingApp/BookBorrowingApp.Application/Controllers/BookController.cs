@@ -187,7 +187,7 @@ public class BookController(IBookService bookService) : ControllerBase
             // Check for model validations.
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
 
             // Updated the book details.
