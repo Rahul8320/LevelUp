@@ -28,25 +28,30 @@
           class="object-cover h-48 w-full"
         />
       </div>
-      <div class="w-1/3 mt-5">
+      <!-- maker, model, price -->
+      <div class="w-1/3 my-2">
         <h2 class="my-2 text-3xl font-bold text-slate-700">
           {{ item.maker }} <span class="mx-2 text-2xl">|</span>
           <span class="text-xl text-slate-500">{{ item.model }}</span>
         </h2>
         <h2 class="my-2 text-lg font-medium text-slate-600">
-          Avg: {{ item.fuelEconomy }} kmpl
+          Average: {{ item.fuelEconomy }} kmpl
         </h2>
-        <h2 class="my-2 text-lg font-medium text-slate-600">
-          Tank capacity: {{ item.fuelCapacity }} litter
+        <h2 class="font-medium text-green-500">👉 Free helmet included</h2>
+        <h2 class="font-medium text-lg text-green-600">
+          👉 No more hidden charges | Free cancellation
         </h2>
       </div>
+      <!-- View details -->
       <div class="w-1/3 my-auto">
         <div
           class="mx-auto w-1/2 bg-gray-200 rounded-md p-5 text-center shadow-md"
         >
+          <!-- bike status -->
           <p class="font-semibold text-indigo-500">
             {{ item.currentBikeStatus }}
           </p>
+          <!-- rent per day -->
           <p class="text-lg my-2">
             {{ item.rentalPricePerDay | currency : "₹" }} per day
           </p>

@@ -293,7 +293,7 @@ public class BikeService(IUnitOfWork unitOfWork, IAuthService authService) : IBi
             // check price is null or not
             if (price.HasValue)
             {
-                availableBikes = availableBikes.Where(b => b.RentalPricePerDay == price);
+                availableBikes = availableBikes.Where(b => b.RentalPricePerDay <= price);
             }
 
             return new ServiceResult<List<Bike>>(HttpStatusCode.OK, availableBikes.ToList());

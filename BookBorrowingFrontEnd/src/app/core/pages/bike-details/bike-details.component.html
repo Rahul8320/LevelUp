@@ -21,21 +21,61 @@
       <div class="w-2/5">
         <img
           [src]="bikeDetails()?.coverImage"
-          alt="cover image"
-          class="object-cover h-96 w-72"
+          alt="bike cover image"
+          class="object-cover h-80 w-full"
         />
       </div>
       <!-- maker & model -->
-      <div class="2/5">
-        
+      <div class="w-2/5 my-5">
+        <h2 class="my-2 text-3xl font-semibold text-slate-700">
+          <span>
+            {{ bikeDetails()?.maker }}
+          </span>
+          <span class="mx-1 text-purple-500">|</span>
+          <span class="text-2xl text-slate-500">
+            {{ bikeDetails()?.model }}</span
+          >
+        </h2>
+        <!-- fuel economy -->
+        <h2 class="text-lg font-medium text-slate-600">
+          Average: {{ bikeDetails()?.fuelEconomy }} kmpl
+        </h2>
+        <!-- fuel capacity -->
+        <h2 class="text-lg font-medium text-slate-600">
+          Tank capacity: {{ bikeDetails()?.fuelCapacity }} litter
+        </h2>
+        <!-- late fees per day -->
+        <h2 class="text-lg font-medium text-slate-600">
+          <span
+            >Late fee: {{ bikeDetails()?.lateFeesPerDay | currency : "₹" }} per
+            day</span
+          >
+          <span>
+            <mat-icon
+              matTooltip="Late fee applied for the days after your booking end."
+              fontIcon="info"
+              class="text-sm mx-1 text-gray-500"
+            ></mat-icon>
+          </span>
+        </h2>
+        <!-- last update -->
+        <h2 class="text-lg font-medium text-slate-600">
+          Last updated on: {{ bikeDetails()?.lastUpdated | date : "medium" }}
+        </h2>
       </div>
       <!-- rent now -->
-      <div class="1/5 text-center my-auto">
-        <div class="h-36 p-5 bg-gray-200 rounded-md shadow-md mb-10">
+      <div class="1/5 text-center my-auto mx-auto">
+        <div class="h-44 p-5 bg-gray-200 rounded-md shadow-md mt-10">
           <h1 class="font-semibold text-indigo-500">
             {{ bikeDetails()?.currentBikeStatus }}
           </h1>
-          <p class="text-slate-500 font-medium">Want to ride</p>
+          <p class="text-lg my-1">
+            <span class="font-medium">{{
+              bikeDetails()?.rentalPricePerDay | currency : "₹"
+            }}</span>
+            per day
+          </p>
+          <p class="text-slate-500 font-medium my-1">Want to ride</p>
           <button mat-raised-button color="primary" class="my-2">
             <span class="mx-2 text-lg">Rent Now</span>
           </button>

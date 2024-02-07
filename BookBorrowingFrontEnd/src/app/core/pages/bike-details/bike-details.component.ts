@@ -5,13 +5,22 @@ import { Bike } from '../../models/bike.model';
 import { LoadingComponent } from '../../../shared/components/loading/loading.component';
 import { BikesService } from '../../../shared/services/bikes.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-bike-details',
   standalone: true,
-  imports: [LoadingComponent, DatePipe, MatButtonModule],
+  imports: [
+    LoadingComponent,
+    DatePipe,
+    MatButtonModule,
+    CurrencyPipe,
+    MatTooltipModule,
+    MatIconModule,
+  ],
   templateUrl: './bike-details.component.html',
   styleUrl: './bike-details.component.css',
 })
