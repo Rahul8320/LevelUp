@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { Bike } from '../../core/models/bike.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BikesService {
   apiBaseUrl: string = '';
@@ -14,8 +14,13 @@ export class BikesService {
     this.apiBaseUrl = environment.apiUrl;
   }
 
-  getAllAvailableBikes(maker: string | null, model: string | null, price: number | null): Observable<Bike[]> {
-    const apiUrl = `${this.apiBaseUrl}/api/bikes?maker=${maker ?? ""}&model=${model ?? ""}&price=${price ?? ""}`;
+  getAllAvailableBikes(
+    maker: string | null,
+    model: string | null,
+    price: number | null
+  ): Observable<Bike[]> {
+    const apiUrl = `${this.apiBaseUrl}/api/bikes?maker=${maker ?? ''}&model=${model ?? ''
+      }&price=${price ?? ''}`;
     return this._httpClient.get<Bike[]>(apiUrl);
   }
 
@@ -23,5 +28,4 @@ export class BikesService {
     const apiUrl = `${this.apiBaseUrl}/api/bikes/${bikeId}`;
     return this._httpClient.get<Bike>(apiUrl);
   }
-
 }

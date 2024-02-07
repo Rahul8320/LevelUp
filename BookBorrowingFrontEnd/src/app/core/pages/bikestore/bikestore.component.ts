@@ -6,13 +6,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { LoadingComponent } from '../../../shared/components/loading/loading.component';
 import { CurrencyPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-bikestore',
   standalone: true,
-  imports: [LoadingComponent, CurrencyPipe, MatButtonModule],
+  imports: [LoadingComponent, CurrencyPipe, MatButtonModule, RouterLink],
   templateUrl: './bikestore.component.html',
-  styleUrl: './bikestore.component.css'
+  styleUrl: './bikestore.component.css',
 })
 export class BikestoreComponent implements OnInit, OnDestroy {
   isLoading = signal<boolean>(true);
@@ -22,18 +23,19 @@ export class BikestoreComponent implements OnInit, OnDestroy {
   model = signal<string | null>(null);
   price = signal<number | null>(null);
 
-  constructor(private _bikeService: BikesService) { }
+  constructor(private _bikeService: BikesService) {}
 
   ngOnInit(): void {
-    this.getAllBikesSubscription = this._bikeService.getAllAvailableBikes(
-      this.maker(), this.model(), this.price()).subscribe({
+    this.getAllBikesSubscription = this._bikeService
+      .getAllAvailableBikes(this.maker(), this.model(), this.price())
+      .subscribe({
         next: (res: Bike[]) => {
           this.availableBikes.set(res);
         },
         error: (err: HttpErrorResponse) => {
           console.error(err);
-          alert("Something went wrong!");
-        }
+          alert('Something went wrong!');
+        },
       });
     this.isLoading.set(false);
   }
@@ -41,5 +43,4 @@ export class BikestoreComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.getAllBikesSubscription?.unsubscribe();
   }
-
 }

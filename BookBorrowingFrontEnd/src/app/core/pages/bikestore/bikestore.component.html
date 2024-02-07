@@ -2,7 +2,7 @@
   <!-- Heading -->
   <section class="text-center my-3">
     <h1
-      class="text-3xl font-bold text-slate-600 underline underline-offset-4 decoration-orange-200"
+      class="text-3xl font-bold text-slate-600 underline underline-offset-4 decoration-auto decoration-purple-600"
     >
       Travel The World
     </h1>
@@ -17,7 +17,9 @@
   <section class="w-full max-h-screen mb-5">
     <!-- loop all bikes -->
     @for (item of availableBikes(); track $index) {
-    <section class="mx-5 my-3 border-2 border-gray-300 rounded-md flex">
+    <section
+      class="mx-5 my-3 border-2 border-slate-300 rounded-md flex shadow-md bg-slate-100"
+    >
       <!-- cover image -->
       <div class="w-1/3">
         <img
@@ -27,24 +29,33 @@
         />
       </div>
       <div class="w-1/3 mt-5">
-        <h2 class="my-2 text-2xl font-bold text-slate-700">{{ item.maker }}</h2>
-        <h2 class="my-3 text-xl text-slate-500">
-          {{ item.model }}
+        <h2 class="my-2 text-3xl font-bold text-slate-700">
+          {{ item.maker }} <span class="mx-2 text-2xl">|</span>
+          <span class="text-xl text-slate-500">{{ item.model }}</span>
         </h2>
-        <h2 class="my-2 text-lg text-slate-600">
-          Avg {{ item.fuelEconomy }} kmpl
+        <h2 class="my-2 text-lg font-medium text-slate-600">
+          Avg: {{ item.fuelEconomy }} kmpl
+        </h2>
+        <h2 class="my-2 text-lg font-medium text-slate-600">
+          Tank capacity: {{ item.fuelCapacity }} litter
         </h2>
       </div>
       <div class="w-1/3 my-auto">
-        <div class="mx-auto w-1/2 bg-gray-200 rounded-md p-5 text-center">
-          <p class="font-semibold text-indigo-600">
+        <div
+          class="mx-auto w-1/2 bg-gray-200 rounded-md p-5 text-center shadow-md"
+        >
+          <p class="font-semibold text-indigo-500">
             {{ item.currentBikeStatus }}
           </p>
           <p class="text-lg my-2">
             {{ item.rentalPricePerDay | currency : "₹" }} per day
           </p>
-          <button mat-raised-button color="primary">
-            <span class="mx-3 text-lg">Rent Now</span>
+          <button
+            mat-raised-button
+            color="primary"
+            [routerLink]="['/bike-details', item.id]"
+          >
+            <span class="mx-1 text-lg">View Details</span>
           </button>
         </div>
       </div>

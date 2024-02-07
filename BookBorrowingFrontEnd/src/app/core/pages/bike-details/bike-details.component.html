@@ -1,0 +1,68 @@
+<main class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 mt-3">
+  <!-- Heading -->
+  <section class="text-center my-3">
+    <h1
+      class="text-3xl font-bold text-slate-600 underline underline-offset-4 decoration-auto decoration-purple-600"
+    >
+      Bike Details
+    </h1>
+  </section>
+
+  <!-- loading  -->
+  @if (isLoading()) {
+  <app-loading></app-loading>
+  }@else{
+  <!-- bike details -->
+  <section class="my-5 px-5 w-full">
+    <div
+      class="my-5 w-full flex flex-row border-2 border-slate-300 bg-slate-100 rounded-lg shadow-lg"
+    >
+      <!-- bike cover image -->
+      <div class="w-2/5">
+        <img
+          [src]="bikeDetails()?.coverImage"
+          alt="cover image"
+          class="object-cover h-96 w-72"
+        />
+      </div>
+      <!-- maker & model -->
+      <div class="2/5">
+        
+      </div>
+      <!-- rent now -->
+      <div class="1/5 text-center my-auto">
+        <div class="h-36 p-5 bg-gray-200 rounded-md shadow-md mb-10">
+          <h1 class="font-semibold text-indigo-500">
+            {{ bikeDetails()?.currentBikeStatus }}
+          </h1>
+          <p class="text-slate-500 font-medium">Want to ride</p>
+          <button mat-raised-button color="primary" class="my-2">
+            <span class="mx-2 text-lg">Rent Now</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- description -->
+    <div class="my-5">
+      <h1 class="text-xl font-medium text-slate-600">Description:</h1>
+      <p class="mx-5 my-2">{{ bikeDetails()?.description }}</p>
+    </div>
+
+    @if (bikeDetails()?.images) {
+    <!-- Available Images -->
+    <div class="my-5">
+      <h1 class="text-xl font-medium text-slate-600">Available Bike Images:</h1>
+      <div class="flex flex-row">
+        @for (item of bikeDetails()?.images; track $index) {
+        <div class="m-5">
+          <img [src]="item" alt="Bike image" class="object-fill h-56 w-full" />
+        </div>
+        }
+      </div>
+    </div>
+    }@else {
+    <div class="h-32"></div>
+    }
+  </section>
+  }
+</main>
