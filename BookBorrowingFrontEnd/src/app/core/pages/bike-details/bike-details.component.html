@@ -65,6 +65,15 @@
       </div>
       <!-- rent now -->
       <div class="1/5 text-center my-auto mx-auto">
+        <!-- bike rating -->
+        <div class="text-left mx-1">
+          <h1 class="font-medium text-gray-500">
+            <span>{{ bikeRatingDetails()?.averageRating }} ⭐</span>
+            <span class="mx-2">|</span>
+            <span>{{ bikeRatingDetails()?.numberOfRating }} ratings</span>
+          </h1>
+        </div>
+
         <div class="h-44 p-5 bg-gray-200 rounded-md shadow-md mt-10">
           <h1 class="font-semibold text-indigo-500">
             {{ bikeDetails()?.currentBikeStatus }}
@@ -88,8 +97,8 @@
       <p class="mx-5 my-2">{{ bikeDetails()?.description }}</p>
     </div>
 
-    @if (bikeDetails()?.images) {
     <!-- Available Images -->
+    @if (bikeDetails()?.images) {
     <div class="my-5">
       <h1 class="text-xl font-medium text-slate-600">Available Bike Images:</h1>
       <div class="flex flex-row">
@@ -100,8 +109,24 @@
         }
       </div>
     </div>
-    }@else {
-    <div class="h-32"></div>
+    }
+
+    <!-- Reviews -->
+    @if (bikeRatingDetails()?.bikeRatings) {
+    <div class="my-5">
+      <h1 class="text-xl font-medium text-slate-600">Bike Reviews:</h1>
+      <div class="flex flex-col">
+        @for (item of bikeRatingDetails()?.bikeRatings; track $index) {
+        <div class="my-2">
+          <p>User: {{ item.userId }}</p>
+          <p>Rating: {{ item.rating }} ⭐</p>
+          <p>Review: {{ item.review }}</p>
+        </div>
+        }@empty {
+        <h3 class="my-2 mx-5 text-gray-600">No Reviews Found</h3>
+        }
+      </div>
+    </div>
     }
   </section>
   }

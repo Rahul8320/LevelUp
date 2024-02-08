@@ -9,6 +9,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
+import { BikeRatingDetails } from '../../models/bike-rating.model';
 
 @Component({
   selector: 'app-bike-details',
@@ -28,7 +29,9 @@ export class BikeDetailsComponent implements OnInit, OnDestroy {
   isLoading = signal<boolean>(true);
   bikeId = signal<string>('');
   bikeDetails = signal<Bike | undefined>(undefined);
+  bikeRatingDetails = signal<BikeRatingDetails | undefined>(undefined);
   getBikeDetailsSubscription: Subscription | undefined;
+  getBikeRatingDetailsSubscription: Subscription | undefined;
 
   constructor(
     private _route: ActivatedRoute,
@@ -56,10 +59,23 @@ export class BikeDetailsComponent implements OnInit, OnDestroy {
         },
       });
 
+    this.getBikeRatingDetailsSubscription = this._bikeService
+      .getBikeRatingDetails(this.bikeId())
+      .subscribe({
+        next: (res: BikeRatingDetails) => {
+          this.bikeRatingDetails.set(res);
+        },
+        error: (err: HttpErrorResponse) => {
+          console.error(err);
+          alert('Something went wrong!');
+        },
+      });
+
     this.isLoading.set(false);
   }
 
   ngOnDestroy(): void {
     this.getBikeDetailsSubscription?.unsubscribe();
+    this.getBikeRatingDetailsSubscription?.unsubscribe();
   }
 }
