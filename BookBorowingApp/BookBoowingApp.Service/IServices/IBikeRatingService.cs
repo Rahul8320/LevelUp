@@ -13,18 +13,16 @@ public interface IBikeRatingService
     /// Create new rating for bike.
     /// </summary>
     /// <param name="bikeRatingModel">The bike rating model.</param>
-    /// <param name="userId">The user id.</param>
     /// <returns>Returns service result indicating the result of this operation.</returns>
-    Task<ServiceResult> AddRating(AddBikeRatingModel bikeRatingModel, Guid userId);
+    Task<ServiceResult> AddRating(AddBikeRatingModel bikeRatingModel);
 
     /// <summary>
     /// Update an existing rating details.
     /// </summary>
     /// <param name="ratingId">The rating id.</param>
     /// <param name="review">The updated review.</param>
-    /// <param name="userId">The user id.</param>
     /// <returns>Returns service result indicating the result of this operation.</returns>
-    Task<ServiceResult> UpdateExistingRating(Guid ratingId, string review, Guid userId);
+    Task<ServiceResult> UpdateExistingRating(Guid ratingId, string review);
 
     /// <summary>
     /// Get bike rating details.

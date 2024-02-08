@@ -11,7 +11,7 @@ namespace BookBoowingApp.Service.ServiceImplementations;
 /// <summary>
 /// Represents the implementation of bike rating service interface.
 /// </summary>
-public class BikeRatingService(IUnitOfWork unitOfWork) : IBikeRatingService
+public class BikeRatingService(IUnitOfWork unitOfWork, IAuthService authService) : IBikeRatingService
 {
     /// <summary>
     /// Represents the unit of work interface.
@@ -19,16 +19,23 @@ public class BikeRatingService(IUnitOfWork unitOfWork) : IBikeRatingService
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     /// <summary>
+    /// Represents the auth service interface.
+    /// </summary>
+    private readonly IAuthService _authService = authService;
+
+    /// <summary>
     /// Create new rating.
     /// </summary>
     /// <param name="bikeRatingModel">The bike rating model.</param>
-    /// <param name="userId">The user id.</param>
     /// <returns>Returns service result indicating the result of this action.</returns>
     /// <exception cref="ApiException">The api exception.</exception>
-    public async Task<ServiceResult> AddRating(AddBikeRatingModel bikeRatingModel, Guid userId)
+    public async Task<ServiceResult> AddRating(AddBikeRatingModel bikeRatingModel)
     {
         try
         {
+            // Get logged in user data
+            var userData = _authService.GetAuthenticatedUserData();
+
             // fetch bike data
             var bikeDetails = await _unitOfWork.BikeRepository.Get(bikeRatingModel.BikeId);
 
@@ -46,7 +53,7 @@ public class BikeRatingService(IUnitOfWork unitOfWork) : IBikeRatingService
             {
                 Id = Guid.NewGuid(),
                 BikeId = bikeRatingModel.BikeId,
-                UserId = userId,
+                UserId = Guid.Parse(userData.UserId!),
                 Rating = bikeRatingModel.Rating,
                 Review = bikeRatingModel.Review,
                 LastUpdated = DateTime.UtcNow,
@@ -132,13 +139,15 @@ public class BikeRatingService(IUnitOfWork unitOfWork) : IBikeRatingService
     /// </summary>
     /// <param name="ratingId">The rating id.</param>
     /// <param name="review">The updated review.</param>
-    /// <param name="userId">The user id.</param>
     /// <returns>Returns a service result indication the result of this operation.</returns>
     /// <exception cref="ApiException">The api exception.</exception>
-    public async Task<ServiceResult> UpdateExistingRating(Guid ratingId, string review, Guid userId)
+    public async Task<ServiceResult> UpdateExistingRating(Guid ratingId, string review)
     {
         try
         {
+            // Get logged in user data
+            var userData = _authService.GetAuthenticatedUserData();
+
             // Fetch rating details
             var bikeRating = await _unitOfWork.BikeRatingRepository.Get(ratingId);
 
@@ -152,7 +161,7 @@ public class BikeRatingService(IUnitOfWork unitOfWork) : IBikeRatingService
             }
 
             // check for requested user is same as rating user
-            if (bikeRating.UserId != userId)
+            if (bikeRating.UserId != Guid.Parse(userData.UserId!))
             {
                 return new ServiceResult(
                     HttpStatusCode.Forbidden,
