@@ -7,11 +7,20 @@ import { LoadingComponent } from '../../../shared/components/loading/loading.com
 import { CurrencyPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-bikestore',
   standalone: true,
-  imports: [LoadingComponent, CurrencyPipe, MatButtonModule, RouterLink],
+  imports: [
+    LoadingComponent,
+    CurrencyPipe,
+    MatButtonModule,
+    RouterLink,
+    MatInputModule,
+    MatFormFieldModule,
+  ],
   templateUrl: './bikestore.component.html',
   styleUrl: './bikestore.component.css',
 })
@@ -26,6 +35,11 @@ export class BikestoreComponent implements OnInit, OnDestroy {
   constructor(private _bikeService: BikesService) {}
 
   ngOnInit(): void {
+    this.getAvailableBikes();
+  }
+
+  getAvailableBikes(): void {
+    this.isLoading.set(true);
     this.getAllBikesSubscription = this._bikeService
       .getAllAvailableBikes(this.maker(), this.model(), this.price())
       .subscribe({
@@ -38,6 +52,40 @@ export class BikestoreComponent implements OnInit, OnDestroy {
         },
       });
     this.isLoading.set(false);
+  }
+
+  onMakerChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.maker.set(target.value);
+    this.isButtonEnable();
+  }
+
+  onModelChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.model.set(target.value);
+    this.isButtonEnable();
+  }
+
+  onPriceChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.price.set(Number(target.value));
+    this.isButtonEnable();
+  }
+
+  isButtonEnable() {
+    return this.maker() || this.model() || this.price();
+  }
+
+  onSearch() {
+    this.getAvailableBikes();
+  }
+
+  onReset() {
+    // this.isButtonEnable.set(false);
+    this.maker.set(null);
+    this.model.set(null);
+    this.price.set(null);
+    this.getAvailableBikes();
   }
 
   ngOnDestroy(): void {
