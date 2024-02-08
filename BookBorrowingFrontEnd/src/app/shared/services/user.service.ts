@@ -18,8 +18,8 @@ export class UserService {
   }
 
   userLogin(loginRequestData: LoginRequest): Observable<LoginResponse> {
-    const apiUrl = `${this.apiBaseUrl}/api/Authentication/login`;
-    return this._httpClient.post<LoginResponse>(apiUrl, { loginRequestData });
+    const apiUrl = `${this.apiBaseUrl}/api/authentication/login`;
+    return this._httpClient.post<LoginResponse>(apiUrl, loginRequestData);
   }
 
   userLogout(): boolean {
@@ -29,10 +29,10 @@ export class UserService {
   }
 
   verifyAuthToken(token: string): Observable<AuthUser> {
-    const apiUrl = `${this.apiBaseUrl}/api/Authentication/verify`;
+    const apiUrl = `${this.apiBaseUrl}/api/authentication/verify`;
     return this._httpClient.get<AuthUser>(apiUrl, {
       headers: {
-        authentication: token,
+        Authorization: `Bearer ${token}`,
       },
     });
   }

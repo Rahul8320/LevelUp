@@ -11,9 +11,10 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../../../shared/services/user.service';
 import { Subscription } from 'rxjs';
 import { LoginRequest, LoginResponse } from '../../models/login.model';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { LoadingComponent } from '../../../shared/components/loading/loading.component';
 import { AuthUser } from '../../models/auth-user.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -37,7 +38,11 @@ export class LoginComponent implements OnDestroy {
   getUserDataSubscription: Subscription | undefined;
   isLoading = signal<boolean>(false);
 
-  constructor(private _userService: UserService, private _router: Router) {}
+  constructor(
+    private _userService: UserService,
+    private _router: Router,
+    private _snackbar: MatSnackBar
+  ) {}
 
   isUsernameInvalid() {
     return (
@@ -65,32 +70,37 @@ export class LoginComponent implements OnDestroy {
       password: this.loginForm.value.password!,
     };
 
+    // submit login request
     this.userLoginSubscription = this._userService
       .userLogin(loginRequestData)
       .subscribe({
         next: (res: LoginResponse) => {
           this._userService.authToken.set(res.token);
+          // submit verify token request
           this.getUserDataSubscription = this._userService
             .verifyAuthToken(res.token)
             .subscribe({
               next: (res: AuthUser) => {
                 this._userService.authUser.set(res);
+                this._router.navigate(['/']);
+                this._snackbar.open('Login success.', '✅');
               },
               error: (err: HttpErrorResponse) => {
-                console.warn(err);
-                alert('Something went wrong!');
+                this._snackbar.open('Something went wrong!', '❌');
               },
             });
         },
         error: (err: HttpErrorResponse) => {
           console.warn(err);
-          alert('Something went wrong!');
+          if (err.status === HttpStatusCode.Unauthorized) {
+            this._snackbar.open('Invalid credentials', '❌');
+          } else {
+            this._snackbar.open('Something went wrong!', '❌');
+          }
         },
       });
 
-    this._router.navigate(['/']);
     this.isLoading.set(false);
-    this.loginForm.reset();
   }
 
   ngOnDestroy(): void {
