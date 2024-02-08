@@ -1,1 +1,98 @@
-<p>login works!</p>
+<main
+  class="bg-slate-700 max-w-6xl mx-auto my-8 rounded-xl shadow-lg shadow-stone-500 h-[80vh] flex flex-row"
+>
+  <section class="w-1/2 h-full p-10">
+    <div class="p-5 rounded-md shadow-xl">
+      <!-- headings -->
+      <div class="mt-7 mx-10 text-center">
+        <h2 class="text-4xl text-purple-50 font-medium">Borrowing App</h2>
+        <p class="mt-2 font-medium text-gray-200">
+          Start your ride in few clicks. Don't have an account?
+          <a
+            [routerLink]="['/register']"
+            class="underline text-blue-100 hover:text-blue-300"
+            >Register</a
+          >
+          now.
+        </p>
+      </div>
+      <!-- username and password -->
+      <div class="my-5 mx-10">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <!-- username -->
+          <div class="my-2">
+            <label for="username" class="text-white font-medium text-lg"
+              >Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              required
+              formControlName="username"
+              placeholder="Please enter your username"
+              class="w-full rounded-md outline-none my-1 p-2 text-slate-800 font-medium text-lg"
+              [ngClass]="{
+                'border-2 border-red-600 placeholder:text-red-400':
+                  isUsernameInvalid()
+              }"
+            />
+            <!-- validator error message -->
+            @if(isUsernameInvalid()){
+            <div class="text-red-500 font-medium">
+              <p>Username is required.</p>
+            </div>
+            }
+          </div>
+
+          <!-- password -->
+          <div class="my-2">
+            <label for="password" class="text-white">Password </label>
+            <input
+              type="password"
+              id="password"
+              required
+              formControlName="password"
+              placeholder="Please enter your password"
+              class="w-full rounded-md outline-none my-1 p-2 text-slate-800 font-medium text-lg"
+              [ngClass]="{
+                'border-2 border-red-600 placeholder:text-red-400':
+                  isPasswordInvalid()
+              }"
+            />
+            <!-- validator error message -->
+            @if(isPasswordInvalid()){
+            <div class="text-red-500 font-medium">
+              <p>Password is required.</p>
+            </div>
+            }
+          </div>
+        </form>
+        <!-- loading icon -->
+        @if(isLoading()){
+        <app-loading></app-loading>
+        }@else {
+        <!-- login button -->
+        <div class="my-8 w-full">
+          <button
+            type="submit"
+            mat-raised-button
+            color="primary"
+            class="w-full"
+            [disabled]="!loginForm.valid"
+            (click)="onSubmit()"
+          >
+            <span class="text-lg"> Login to your account </span>
+          </button>
+        </div>
+        }
+      </div>
+    </div>
+  </section>
+  <section class="w-1/2 h-full">
+    <img
+      src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/authentication/illustration.svg"
+      alt="image of login"
+      class="object-fit w-full h-full my-5"
+    />
+  </section>
+</main>

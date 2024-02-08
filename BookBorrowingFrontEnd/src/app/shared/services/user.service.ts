@@ -1,16 +1,17 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, single } from 'rxjs';
 import { LoginRequest, LoginResponse } from '../../core/models/login.model';
+import { AuthUser } from '../../core/models/auth-user.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
-  private readonly TOKEN_KEY = "authToken";
-
   apiBaseUrl: string = '';
+  authToken = signal<string | null>(null);
+  authUser = signal<AuthUser | undefined>(undefined);
 
   constructor(private _httpClient: HttpClient) {
     this.apiBaseUrl = environment.apiUrl;
@@ -21,15 +22,18 @@ export class UserService {
     return this._httpClient.post<LoginResponse>(apiUrl, { loginRequestData });
   }
 
-  getAuthToken(): string | null {
-    return sessionStorage.getItem(this.TOKEN_KEY);
+  userLogout(): boolean {
+    this.authToken.set(null);
+    this.authUser.set(undefined);
+    return true;
   }
 
-  setAuthToken(token: string): void {
-    sessionStorage.setItem(this.TOKEN_KEY, token);
-  }
-
-  clearAuthToken(): void {
-    sessionStorage.removeItem(this.TOKEN_KEY);
+  verifyAuthToken(token: string): Observable<AuthUser> {
+    const apiUrl = `${this.apiBaseUrl}/api/Authentication/verify`;
+    return this._httpClient.get<AuthUser>(apiUrl, {
+      headers: {
+        authentication: token,
+      },
+    });
   }
 }
