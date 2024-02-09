@@ -83,19 +83,27 @@ export class LoginComponent implements OnDestroy {
               next: (res: AuthUser) => {
                 this._userService.setSessionUserData(res);
                 this._router.navigate(['/']);
-                this._snackbar.open('Login success.', '✅');
+                this._snackbar.open('Login Successfully.', '✅', {
+                  duration: 3000,
+                });
               },
               error: (err: HttpErrorResponse) => {
-                this._snackbar.open('Something went wrong!', '❌');
+                this._snackbar.open('Something went wrong!', '❌', {
+                  duration: 5000,
+                });
               },
             });
         },
         error: (err: HttpErrorResponse) => {
           console.warn(err);
           if (err.status === HttpStatusCode.Unauthorized) {
-            this._snackbar.open('Invalid credentials', '❌');
+            this._snackbar.open('Invalid credentials', '❌', {
+              duration: 5000,
+            });
           } else {
-            this._snackbar.open('Something went wrong!', '❌');
+            this._snackbar.open('Something went wrong!', '❌', {
+              duration: 5000,
+            });
           }
         },
       });

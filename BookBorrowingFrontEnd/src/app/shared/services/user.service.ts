@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, signal } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { LoginRequest, LoginResponse } from '../../core/models/login.model';
@@ -13,6 +13,8 @@ export class UserService {
   apiBaseUrl: string = '';
   authToken = signal<string | null>(null);
   authUser = signal<AuthUser | undefined>(undefined);
+
+  isAdminUser = computed(() => this.authUser()?.role === 'Admin');
 
   private readonly TOKEN_KEY = 'auth-token';
   private readonly EXPIRES_AT = 'expires-at';
