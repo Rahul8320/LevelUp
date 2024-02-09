@@ -26,9 +26,16 @@
           </div>
         </div>
       </div>
+      <!-- login / logout button space -->
       <div
         class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
       >
+        @if(authUser() !== undefined){
+        <p>Hello {{ authUser()?.userName }}</p>
+        <button type="submit" class="mx-2 bg-gray-400" (click)="onLogout()">
+          Logout
+        </button>
+        }@else {
         <div class="flex space-x-4">
           <a mat-stroked-button routerLink="/login" class="mx-2">Login</a>
         </div>
@@ -41,6 +48,7 @@
             >Register</a
           >
         </div>
+        }
       </div>
     </div>
   </div>

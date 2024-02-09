@@ -75,13 +75,13 @@ export class LoginComponent implements OnDestroy {
       .userLogin(loginRequestData)
       .subscribe({
         next: (res: LoginResponse) => {
-          this._userService.authToken.set(res.token);
+          this._userService.setSession(res);
           // submit verify token request
           this.getUserDataSubscription = this._userService
             .verifyAuthToken(res.token)
             .subscribe({
               next: (res: AuthUser) => {
-                this._userService.authUser.set(res);
+                this._userService.setSessionUserData(res);
                 this._router.navigate(['/']);
                 this._snackbar.open('Login success.', '✅');
               },
