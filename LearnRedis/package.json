@@ -1,0 +1,15 @@
+{
+  "name": "learnredis",
+  "version": "1.0.0",
+  "description": "learning redix in nodejs",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "author": "Rahul dey",
+  "license": "ISC",
+  "dependencies": {
+    "redis": "^4.6.13"
+  }
+}
