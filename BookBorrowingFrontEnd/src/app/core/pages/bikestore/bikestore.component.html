@@ -75,7 +75,7 @@
   @if (isLoading()) {
   <app-loading></app-loading>
   } @else {
-  <section class="w-full max-h-screen mb-5">
+  <section class="w-full mb-5">
     <!-- loop all bikes -->
     @for (item of availableBikes(); track $index) {
     <section
@@ -86,11 +86,11 @@
         <img
           [src]="item.coverImage"
           alt="bike cover image"
-          class="object-cover h-48 w-full"
+          class="object-cover h-48 w-full rounded-l-sm"
         />
       </div>
       <!-- maker, model, price -->
-      <div class="w-1/3 my-2">
+      <div class="w-1/3 my-2 px-5">
         <h2 class="my-2 text-3xl font-bold text-slate-700">
           {{ item.maker }} <span class="mx-2 text-2xl">|</span>
           <span class="text-xl text-slate-500">{{ item.model }}</span>
@@ -98,9 +98,11 @@
         <h2 class="my-2 text-lg font-medium text-slate-600">
           Average: {{ item.fuelEconomy }} kmpl
         </h2>
-        <h2 class="font-medium text-green-500">👉 Free helmet included</h2>
+        <h2 class="font-medium text-green-500">
+          👉 Free helmet included | Free cancellation
+        </h2>
         <h2 class="font-medium text-lg text-green-600">
-          👉 No more hidden charges | Free cancellation
+          👉 No more hidden charges
         </h2>
       </div>
       <!-- View details -->

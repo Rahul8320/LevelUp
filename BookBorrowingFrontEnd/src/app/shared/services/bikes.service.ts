@@ -1,9 +1,14 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-import { Bike } from '../../core/models/bike.model';
+import {
+  AddBikeRequest,
+  AddBikeResponse,
+  Bike,
+} from '../../core/models/bike.model';
 import { BikeRatingDetails } from '../../core/models/bike-rating.model';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +16,10 @@ import { BikeRatingDetails } from '../../core/models/bike-rating.model';
 export class BikesService {
   apiBaseUrl: string = '';
 
-  constructor(private _httpClient: HttpClient) {
+  constructor(
+    private _httpClient: HttpClient,
+    private _userService: UserService
+  ) {
     this.apiBaseUrl = environment.apiUrl;
   }
 
@@ -34,5 +42,14 @@ export class BikesService {
   getBikeRatingDetails(bikeId: string): Observable<BikeRatingDetails> {
     const apiUrl = `${this.apiBaseUrl}/api/bike-rating/bike-rating-details/${bikeId}`;
     return this._httpClient.get<BikeRatingDetails>(apiUrl);
+  }
+
+  createNewBike(bikeDetails: AddBikeRequest): Observable<AddBikeResponse> {
+    const apiUrl = `${this.apiBaseUrl}/api/bikes`;
+    return this._httpClient.post<AddBikeResponse>(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${this._userService.authToken()}`,
+      },
+    });
   }
 }

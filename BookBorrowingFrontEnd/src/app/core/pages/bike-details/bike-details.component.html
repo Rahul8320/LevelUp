@@ -22,11 +22,11 @@
         <img
           [src]="bikeDetails()?.coverImage"
           alt="bike cover image"
-          class="object-cover h-80 w-full"
+          class="object-cover h-80 w-full rounded-l-md"
         />
       </div>
       <!-- maker & model -->
-      <div class="w-2/5 my-5">
+      <div class="w-2/5 my-5 px-5">
         <h2 class="my-2 text-3xl font-semibold text-slate-700">
           <span>
             {{ bikeDetails()?.maker }}
@@ -104,7 +104,11 @@
       <div class="flex flex-row">
         @for (item of bikeDetails()?.images; track $index) {
         <div class="m-5">
-          <img [src]="item" alt="Bike image" class="object-fill h-56 w-full" />
+          <img
+            [src]="item"
+            alt="Bike image"
+            class="object-fill h-56 w-full rounded-md"
+          />
         </div>
         }
       </div>

@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 import { LoginRequest, LoginResponse } from '../../core/models/login.model';
 import { AuthUser } from '../../core/models/auth-user.model';
 import { JwtService } from './jwt.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { duration } from 'moment';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +24,8 @@ export class UserService {
 
   constructor(
     private _httpClient: HttpClient,
-    private _jwtService: JwtService
+    private _jwtService: JwtService,
+    private _matSnackbar: MatSnackBar
   ) {
     this.apiBaseUrl = environment.apiUrl;
     if (localStorage.getItem(this.TOKEN_KEY)) {
@@ -74,7 +77,16 @@ export class UserService {
   }
 
   public isLoggedIn() {
-    return this._jwtService.isTokenValid();
+    const isLoggedIn = this._jwtService.isTokenValid();
+    if (!isLoggedIn) {
+      this.userLogout();
+      this._matSnackbar.open(
+        'Your session is expired. Please login again.',
+        'Ok',
+        { duration: 3000 }
+      );
+    }
+    return isLoggedIn;
   }
 
   public isLogout() {

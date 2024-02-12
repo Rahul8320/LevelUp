@@ -1,1 +1,398 @@
-<p>add-bike works!</p>
+<main class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 mt-3">
+  <!-- Heading -->
+  <div class="text-center my-3">
+    <h1
+      class="text-3xl font-bold text-slate-600 underline underline-offset-4 decoration-auto decoration-purple-600"
+    >
+      Add New Bike
+    </h1>
+  </div>
+  <!-- Add bike form -->
+  <section class="my-5 bg-slate-200 p-2 rounded-lg shadow-md mx-auto">
+    <form [formGroup]="addBikeForm" method="post" (ngSubmit)="addNewBike()">
+      <!-- maker -->
+      <div class="my-2 w-4/5 mx-auto flex flex-row items-center">
+        <div class="w-1/6 text-right mr-5">
+          <label for="maker" class="text-slate-800 font-medium text-lg"
+            >Maker :
+          </label>
+        </div>
+        <div class="w-3/6">
+          <input
+            type="text"
+            id="maker"
+            required
+            formControlName="maker"
+            placeholder="Please enter bike maker"
+            class="w-full rounded-md outline-none my-1 p-2 text-slate-800 font-medium text-lg"
+            [ngClass]="{
+              'border-2 border-red-600 placeholder:text-red-400':
+                maker?.invalid && (maker?.dirty || maker?.touched)
+            }"
+          />
+        </div>
+        <div class="w-2/6 mx-5">
+          <!-- validator error message -->
+          @if(maker?.invalid && (maker?.dirty || maker?.touched)){
+          @if(maker?.errors?.['required']){
+          <div class="text-red-500 font-medium">
+            <p>Maker is required!</p>
+          </div>
+          } @if(maker?.errors?.['minlength']){
+          <div class="text-red-500 font-medium">
+            <p>Maker must be 3 character long!</p>
+          </div>
+          } @if(maker?.errors?.['maxlength']){
+          <div class="text-red-500 font-medium">
+            <p>Maker cannot be more than 50 character long!</p>
+          </div>
+          }}
+        </div>
+      </div>
+      <!-- model -->
+      <div class="my-2 w-4/5 mx-auto flex flex-row items-center">
+        <div class="w-1/6 text-right mr-5">
+          <label for="model" class="text-slate-800 font-medium text-lg"
+            >Model :
+          </label>
+        </div>
+        <div class="w-3/6">
+          <input
+            type="text"
+            id="model"
+            required
+            formControlName="model"
+            placeholder="Please enter bike model"
+            class="w-full rounded-md outline-none my-1 p-2 text-slate-800 font-medium text-lg"
+            [ngClass]="{
+              'border-2 border-red-600 placeholder:text-red-400':
+                model?.invalid && (model?.dirty || model?.touched)
+            }"
+          />
+        </div>
+        <div class="w-2/6 mx-5">
+          <!-- validator error message -->
+          @if(model?.invalid && (model?.dirty || model?.touched)){
+          @if(model?.errors?.['required']){
+          <div class="text-red-500 font-medium">
+            <p>Model is required!</p>
+          </div>
+          } @if(model?.errors?.['minlength']){
+          <div class="text-red-500 font-medium">
+            <p>Model must be 3 character long!</p>
+          </div>
+          } @if(model?.errors?.['maxlength']){
+          <div class="text-red-500 font-medium">
+            <p>Model cannot be more than 50 character long!</p>
+          </div>
+          }}
+        </div>
+      </div>
+      <!-- description -->
+      <div class="my-2 w-4/5 mx-auto flex flex-row items-center">
+        <div class="w-1/6 text-right mr-5">
+          <label for="description" class="text-slate-800 font-medium text-lg">
+            Description :
+          </label>
+        </div>
+        <div class="w-3/6">
+          <input
+            type="text"
+            id="description"
+            required
+            formControlName="description"
+            placeholder="Please enter bike description"
+            class="w-full rounded-md outline-none my-1 p-2 text-slate-800 font-medium text-lg"
+            [ngClass]="{
+              'border-2 border-red-600 placeholder:text-red-400':
+                description?.invalid &&
+                (description?.dirty || description?.touched)
+            }"
+          />
+        </div>
+        <div class="w-2/6 mx-5">
+          <!-- validator error message -->
+          @if(description?.invalid && (description?.dirty ||
+          description?.touched)){ @if(description?.errors?.['required']){
+          <div class="text-red-500 font-medium">
+            <p>Description is required!</p>
+          </div>
+          } @if(description?.errors?.['minlength']){
+          <div class="text-red-500 font-medium">
+            <p>Description must be 30 character long!</p>
+          </div>
+          } @if(description?.errors?.['maxlength']){
+          <div class="text-red-500 font-medium">
+            <p>Description cannot be more than 500 character long!</p>
+          </div>
+          }}
+        </div>
+      </div>
+      <!-- rental price per day -->
+      <div class="my-2 w-4/5 mx-auto flex flex-row items-center">
+        <div class="w-1/6 text-right mr-5">
+          <label
+            for="rentalPricePerDay"
+            class="text-slate-800 font-medium text-lg"
+          >
+            Rental Price :
+          </label>
+        </div>
+        <div class="w-3/6">
+          <input
+            type="number"
+            min="100"
+            step="1"
+            max="10000"
+            id="rentalPricePerDay"
+            required
+            formControlName="rentalPricePerDay"
+            placeholder="Please enter bike rental price per day"
+            class="w-full rounded-md outline-none my-1 p-2 text-slate-800 font-medium text-lg"
+            [ngClass]="{
+              'border-2 border-red-600 placeholder:text-red-400':
+                rentalPricePerDay?.invalid &&
+                (rentalPricePerDay?.dirty || rentalPricePerDay?.touched)
+            }"
+          />
+        </div>
+        <div class="w-2/6 mx-5">
+          <!-- validator error message -->
+          @if(rentalPricePerDay?.invalid && (rentalPricePerDay?.dirty ||
+          rentalPricePerDay?.touched)){
+          @if(rentalPricePerDay?.errors?.['required']){
+          <div class="text-red-500 font-medium">
+            <p>Rental Price is required!</p>
+          </div>
+          } @if(rentalPricePerDay?.errors?.['min']){
+          <div class="text-red-500 font-medium">
+            <p>Rental Price must be more than or equals to 100!</p>
+          </div>
+          } @if(rentalPricePerDay?.errors?.['max']){
+          <div class="text-red-500 font-medium">
+            <p>Rental Price cannot be more than 10000!</p>
+          </div>
+          }}
+        </div>
+      </div>
+      <!-- late fees per day -->
+      <div class="my-2 w-4/5 mx-auto flex flex-row items-center">
+        <div class="w-1/6 text-right mr-5">
+          <label
+            for="lateFeesPerDay"
+            class="text-slate-800 font-medium text-lg"
+          >
+            Late Fees :
+          </label>
+        </div>
+        <div class="w-3/6">
+          <input
+            type="number"
+            min="100"
+            step="1"
+            max="10000"
+            id="lateFeesPerDay"
+            required
+            formControlName="lateFeesPerDay"
+            placeholder="Please enter bike late fees per day"
+            class="w-full rounded-md outline-none my-1 p-2 text-slate-800 font-medium text-lg"
+            [ngClass]="{
+              'border-2 border-red-600 placeholder:text-red-400':
+                lateFeesPerDay?.invalid &&
+                (lateFeesPerDay?.dirty || lateFeesPerDay?.touched)
+            }"
+          />
+        </div>
+        <div class="w-2/6 mx-5">
+          <!-- validator error message -->
+          @if(lateFeesPerDay?.invalid && (lateFeesPerDay?.dirty ||
+          lateFeesPerDay?.touched)){ @if(lateFeesPerDay?.errors?.['required']){
+          <div class="text-red-500 font-medium">
+            <p>Late fees is required!</p>
+          </div>
+          } @if(lateFeesPerDay?.errors?.['min']){
+          <div class="text-red-500 font-medium">
+            <p>Late fees must be more than or equals to 100!</p>
+          </div>
+          } @if(lateFeesPerDay?.errors?.['max']){
+          <div class="text-red-500 font-medium">
+            <p>Late fees cannot be more than 10000!</p>
+          </div>
+          }}
+        </div>
+      </div>
+      <!-- fuel capacity -->
+      <div class="my-2 w-4/5 mx-auto flex flex-row items-center">
+        <div class="w-1/6 text-right mr-5">
+          <label for="fuelCapacity" class="text-slate-800 font-medium text-lg">
+            Fuel Capacity :
+          </label>
+        </div>
+        <div class="w-3/6">
+          <input
+            type="number"
+            min="5"
+            step="1"
+            max="25"
+            id="fuelCapacity"
+            required
+            formControlName="fuelCapacity"
+            placeholder="Please enter bike fuel capacity"
+            class="w-full rounded-md outline-none my-1 p-2 text-slate-800 font-medium text-lg"
+            [ngClass]="{
+              'border-2 border-red-600 placeholder:text-red-400':
+                fuelCapacity?.invalid &&
+                (fuelCapacity?.dirty || fuelCapacity?.touched)
+            }"
+          />
+        </div>
+        <div class="w-2/6 mx-5">
+          <!-- validator error message -->
+          @if(fuelCapacity?.invalid && (fuelCapacity?.dirty ||
+          fuelCapacity?.touched)){ @if(fuelCapacity?.errors?.['required']){
+          <div class="text-red-500 font-medium">
+            <p>Fuel capacity is required!</p>
+          </div>
+          } @if(fuelCapacity?.errors?.['min']){
+          <div class="text-red-500 font-medium">
+            <p>Fuel capacity must be more than or equals to 5!</p>
+          </div>
+          } @if(fuelCapacity?.errors?.['max']){
+          <div class="text-red-500 font-medium">
+            <p>Fuel capacity cannot be more than 25!</p>
+          </div>
+          }}
+        </div>
+      </div>
+      <!-- fuel economy -->
+      <div class="my-2 w-4/5 mx-auto flex flex-row items-center">
+        <div class="w-1/6 text-right mr-5">
+          <label for="fuelEconomy" class="text-slate-800 font-medium text-lg">
+            Fuel Economy :
+          </label>
+        </div>
+        <div class="w-3/6">
+          <input
+            type="number"
+            min="5"
+            step="1"
+            max="75"
+            id="fuelEconomy"
+            required
+            formControlName="fuelEconomy"
+            placeholder="Please enter bike fuel economy"
+            class="w-full rounded-md outline-none my-1 p-2 text-slate-800 font-medium text-lg"
+            [ngClass]="{
+              'border-2 border-red-600 placeholder:text-red-400':
+                fuelEconomy?.invalid &&
+                (fuelEconomy?.dirty || fuelEconomy?.touched)
+            }"
+          />
+        </div>
+        <div class="w-2/6 mx-5">
+          <!-- validator error message -->
+          @if(fuelEconomy?.invalid && (fuelEconomy?.dirty ||
+          fuelEconomy?.touched)){ @if(fuelEconomy?.errors?.['required']){
+          <div class="text-red-500 font-medium">
+            <p>Fuel economy is required!</p>
+          </div>
+          } @if(fuelEconomy?.errors?.['min']){
+          <div class="text-red-500 font-medium">
+            <p>Fuel economy must be more than or equals to 5!</p>
+          </div>
+          } @if(fuelEconomy?.errors?.['max']){
+          <div class="text-red-500 font-medium">
+            <p>Fuel economy cannot be more than 25!</p>
+          </div>
+          }}
+        </div>
+      </div>
+      <!-- cover image -->
+      <div class="my-2 w-4/5 mx-auto flex flex-row items-center">
+        <div class="w-1/6 text-right mr-5">
+          <label for="coverImage" class="text-slate-800 font-medium text-lg">
+            Cover Image :
+          </label>
+        </div>
+        <div class="w-3/6">
+          <input
+            type="url"
+            id="coverImage"
+            required
+            formControlName="coverImage"
+            placeholder="Please enter bike cover image"
+            class="w-full rounded-md outline-none my-1 p-2 text-slate-800 font-medium text-lg"
+            [ngClass]="{
+              'border-2 border-red-600 placeholder:text-red-400':
+                coverImage?.invalid &&
+                (coverImage?.dirty || coverImage?.touched)
+            }"
+          />
+        </div>
+        <div class="w-2/6 mx-5">
+          <!-- validator error message -->
+          @if(coverImage?.invalid && (coverImage?.dirty ||
+          coverImage?.touched)){ @if(coverImage?.errors?.['required']){
+          <div class="text-red-500 font-medium">
+            <p>Cover image is required!</p>
+          </div>
+          } @if(coverImage?.errors?.['pattern']){
+          <div class="text-red-500 font-medium">
+            <p>Cover image must be valid image url!</p>
+          </div>
+          } }
+        </div>
+      </div>
+      <!-- images -->
+      <div class="my-2 w-4/5 mx-auto flex flex-row items-center">
+        <div class="w-1/6 text-right mr-5">
+          <label for="images" class="text-slate-800 font-medium text-lg">
+            Images :
+          </label>
+        </div>
+        <div class="w-3/6">
+          <input
+            type="url"
+            id="images"
+            required
+            formControlName="images"
+            placeholder="Please enter bike images"
+            class="w-full rounded-md outline-none my-1 p-2 text-slate-800 font-medium text-lg"
+            [ngClass]="{
+              'border-2 border-red-600 placeholder:text-red-400':
+                images?.invalid && (images?.dirty || images?.touched)
+            }"
+          />
+        </div>
+        <div class="w-2/6 mx-5">
+          <!-- validator error message -->
+          @if(images?.invalid && (images?.dirty || images?.touched)){
+          @if(images?.errors?.['required']){
+          <div class="text-red-500 font-medium">
+            <p>Images is required!</p>
+          </div>
+          } }
+        </div>
+      </div>
+
+      <!-- submit & reset button -->
+      <div class="my-5 w-2/5 mx-auto flex flex-row items-center">
+        @if (isLoading() === false) {
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="this.addBikeForm.invalid"
+        >
+          Add Bike
+        </button>
+        <button mat-raised-button color="warn" type="reset" class="mx-5">
+          Reset
+        </button>
+        } @else {
+        <app-loading></app-loading>
+        }
+      </div>
+    </form>
+  </section>
+</main>

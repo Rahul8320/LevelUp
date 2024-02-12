@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { UserService } from '../../../shared/services/user.service';
 import { Subscription } from 'rxjs';
 import { LoginRequest, LoginResponse } from '../../models/login.model';
@@ -23,7 +23,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     RouterLink,
     ReactiveFormsModule,
     MatButtonModule,
-    CommonModule,
+    NgClass,
     LoadingComponent,
   ],
   templateUrl: './login.component.html',
@@ -31,8 +31,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class LoginComponent implements OnDestroy {
   loginForm = new FormGroup({
-    username: new FormControl('', Validators.required),
-    password: new FormControl('', Validators.required),
+    username: new FormControl<string>('', Validators.required),
+    password: new FormControl<string>('', Validators.required),
   });
   userLoginSubscription: Subscription | undefined;
   getUserDataSubscription: Subscription | undefined;
