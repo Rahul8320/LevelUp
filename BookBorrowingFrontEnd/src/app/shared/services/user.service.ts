@@ -4,7 +4,7 @@ import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { LoginRequest, LoginResponse } from '../../core/models/login.model';
 import { AuthUser } from '../../core/models/auth-user.model';
-import moment from 'moment';
+import { JwtService } from './jwt.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +20,10 @@ export class UserService {
   private readonly EXPIRES_AT = 'expires-at';
   private readonly AUTH_USER_DATA = 'auth-user-data';
 
-  constructor(private _httpClient: HttpClient) {
+  constructor(
+    private _httpClient: HttpClient,
+    private _jwtService: JwtService
+  ) {
     this.apiBaseUrl = environment.apiUrl;
     if (localStorage.getItem(this.TOKEN_KEY)) {
       this.authToken.set(localStorage.getItem(this.TOKEN_KEY));
@@ -48,10 +51,12 @@ export class UserService {
 
   setSession(authResult: LoginResponse) {
     this.authToken.set(authResult.token);
-    const expiresAt = moment().add(authResult.expiration, 'second');
 
     localStorage.setItem(this.TOKEN_KEY, authResult.token);
-    localStorage.setItem(this.EXPIRES_AT, JSON.stringify(expiresAt.valueOf()));
+    localStorage.setItem(
+      this.EXPIRES_AT,
+      JSON.stringify(authResult.expiration)
+    );
   }
 
   setSessionUserData(result: AuthUser) {
@@ -68,14 +73,8 @@ export class UserService {
     return true;
   }
 
-  getExpiration() {
-    const expiration = localStorage.getItem(this.EXPIRES_AT);
-    const expiresAt = JSON.parse(expiration ?? '');
-    return moment(expiresAt);
-  }
-
   public isLoggedIn() {
-    return moment().isBefore(this.getExpiration());
+    return this._jwtService.isTokenValid();
   }
 
   public isLogout() {

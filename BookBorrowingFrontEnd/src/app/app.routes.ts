@@ -22,7 +22,7 @@ export const routes: Routes = [
     title: 'Bike Details Page',
   },
   {
-    path: 'bikestore/add-bike',
+    path: 'add-bike',
     component: AddBikeComponent,
     title: 'Add New Bike',
     canActivate: [authGuard, adminGuard],
