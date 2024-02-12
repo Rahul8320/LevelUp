@@ -20,9 +20,9 @@
       <!-- bike cover image -->
       <div class="w-2/5">
         <img
-          [src]="bikeDetails()?.coverImage"
+          [src]="bikeDetails()?.coverImage?.trim()"
           alt="bike cover image"
-          class="object-cover h-80 w-full rounded-l-md"
+          class="object-fill h-80 w-full rounded-l-md"
         />
       </div>
       <!-- maker & model -->
@@ -105,7 +105,7 @@
         @for (item of bikeDetails()?.images; track $index) {
         <div class="m-5">
           <img
-            [src]="item"
+            [src]="item.trim()"
             alt="Bike image"
             class="object-fill h-56 w-full rounded-md"
           />

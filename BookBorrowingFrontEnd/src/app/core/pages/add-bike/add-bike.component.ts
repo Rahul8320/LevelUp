@@ -14,6 +14,7 @@ import { AddBikeRequest } from '../../models/bike.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { LoadingComponent } from '../../../shared/components/loading/loading.component';
+import { DirtyComponent } from '../../models/dirty-component';
 
 @Component({
   selector: 'app-add-bike',
@@ -22,7 +23,7 @@ import { LoadingComponent } from '../../../shared/components/loading/loading.com
   templateUrl: './add-bike.component.html',
   styleUrl: './add-bike.component.css',
 })
-export class AddBikeComponent implements OnDestroy {
+export class AddBikeComponent implements OnDestroy, DirtyComponent {
   addBikeRequestSubscription: Subscription | undefined;
 
   isLoading = signal<boolean>(false);
@@ -117,6 +118,10 @@ export class AddBikeComponent implements OnDestroy {
       });
 
     this.isLoading.set(false);
+  }
+
+  isDirty(): boolean {
+    return this.addBikeForm.dirty;
   }
 
   get maker() {

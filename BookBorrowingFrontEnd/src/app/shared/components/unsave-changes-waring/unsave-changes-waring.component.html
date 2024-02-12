@@ -1,0 +1,22 @@
+<section class="bg-yellow-50 border-2 border-yellow-400 shadow-md">
+  <h2 mat-dialog-title>
+    <mat-icon class="text-yellow-500">warning</mat-icon>
+    <span class="text-yellow-600 mx-3">Unsaved Data</span>
+  </h2>
+  <hr />
+  <mat-dialog-content>
+    <span class="text-slate-600 font-medium">
+      If you leave the page, your changes will be lost, are you sure you want to
+      continue?
+    </span>
+  </mat-dialog-content>
+  <hr />
+  <mat-dialog-actions>
+    <button mat-stroked-button [mat-dialog-close]="false" cdkFocusInitial>
+      No
+    </button>
+    <button mat-stroked-button color="warn" [mat-dialog-close]="true">
+      Yes
+    </button>
+  </mat-dialog-actions>
+</section>

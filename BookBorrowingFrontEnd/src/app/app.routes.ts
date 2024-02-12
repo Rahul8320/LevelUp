@@ -9,6 +9,7 @@ import { BikeDetailsComponent } from './core/pages/bike-details/bike-details.com
 import { AddBikeComponent } from './core/pages/add-bike/add-bike.component';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { hasUnsavedChangesGuard } from './core/guards/hasUnsaveChanges.guard';
 
 export const routes: Routes = [
   {
@@ -26,6 +27,7 @@ export const routes: Routes = [
     component: AddBikeComponent,
     title: 'Add New Bike',
     canActivate: [authGuard, adminGuard],
+    canDeactivate: [hasUnsavedChangesGuard],
   },
   { path: 'dashboard', component: DashboardComponent, title: 'Dashboard Page' },
   {
