@@ -45,8 +45,9 @@ export class BikesService {
   }
 
   createNewBike(bikeDetails: AddBikeRequest): Observable<AddBikeResponse> {
+    console.log(bikeDetails);
     const apiUrl = `${this.apiBaseUrl}/api/bikes`;
-    return this._httpClient.post<AddBikeResponse>(apiUrl, {
+    return this._httpClient.post<AddBikeResponse>(apiUrl, bikeDetails, {
       headers: {
         Authorization: `Bearer ${this._userService.authToken()}`,
       },

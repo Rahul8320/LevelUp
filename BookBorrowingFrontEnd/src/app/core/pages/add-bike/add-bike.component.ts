@@ -67,7 +67,7 @@ export class AddBikeComponent implements OnDestroy {
       Validators.required,
       Validators.pattern(/^(http|https):\/\/[^ "]+$/),
     ]),
-    images: new FormControl<string[]>([], [Validators.required]),
+    images: new FormControl<string>('', [Validators.required]),
   });
 
   constructor(
@@ -95,7 +95,7 @@ export class AddBikeComponent implements OnDestroy {
       fuelCapacity: this.addBikeForm.value.fuelCapacity!,
       fuelEconomy: this.addBikeForm.value.fuelEconomy!,
       coverImage: this.addBikeForm.value.coverImage!,
-      images: this.addBikeForm.value.images!,
+      images: this.addBikeForm.value.images?.split(',')!,
     };
 
     this.addBikeRequestSubscription = this._bikeService
