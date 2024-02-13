@@ -52,4 +52,13 @@ export class BikesService {
       },
     });
   }
+
+  getAdminBikes(): Observable<Bike[]> {
+    const apiUrl = `${this.apiBaseUrl}/api/bikes/owner-bikes`;
+    return this._httpClient.get<Bike[]>(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${this._userService.authToken()}`,
+      },
+    });
+  }
 }

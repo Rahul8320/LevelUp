@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,12 +26,13 @@ export class NavbarComponent {
 
   isAdminUser = this._userService.isAdminUser;
 
-  constructor(private _matSnackbar: MatSnackBar) {}
+  constructor(private _matSnackbar: MatSnackBar, private _router: Router) {}
 
   onLogout() {
     const result = this._userService.userLogout();
     if (result) {
       this._matSnackbar.open('Logout Successfully.', '✅', { duration: 3000 });
+      this._router.navigate(['/bikestore']);
     } else {
       this._matSnackbar.open('Error in logout!', '❌', { duration: 3000 });
     }

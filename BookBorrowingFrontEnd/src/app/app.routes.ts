@@ -10,6 +10,7 @@ import { AddBikeComponent } from './core/pages/add-bike/add-bike.component';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { hasUnsavedChangesGuard } from './core/guards/hasUnsaveChanges.guard';
+import { AllBikesComponent } from './core/pages/all-bikes/all-bikes.component';
 
 export const routes: Routes = [
   {
@@ -23,11 +24,17 @@ export const routes: Routes = [
     title: 'Bike Details Page',
   },
   {
-    path: 'add-bike',
+    path: 'admin/add-bike',
     component: AddBikeComponent,
     title: 'Add New Bike',
     canActivate: [authGuard, adminGuard],
     canDeactivate: [hasUnsavedChangesGuard],
+  },
+  {
+    path: 'admin/all-bikes',
+    component: AllBikesComponent,
+    title: 'All Bikes',
+    canActivate: [authGuard, adminGuard],
   },
   { path: 'dashboard', component: DashboardComponent, title: 'Dashboard Page' },
   {

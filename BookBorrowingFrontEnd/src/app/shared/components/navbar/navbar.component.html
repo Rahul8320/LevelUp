@@ -35,7 +35,7 @@
         @if(isAdminUser()){
         <div class="flex space-x-4">
           <a
-            routerLink="/add-bike"
+            routerLink="/admin/add-bike"
             routerLinkActive="active"
             class="text-purple-50 hover:text-purple-950 px-2 py-2 text-sm font-medium"
             >Add Bike</a
@@ -85,7 +85,7 @@
           </button>
           <!-- all bikes for admin only -->
           @if(isAdminUser()){
-          <button mat-menu-item>
+          <button mat-menu-item [routerLink]="['/admin/all-bikes']">
             <mat-icon>moped</mat-icon>
             <span>All Bikes</span>
           </button>
