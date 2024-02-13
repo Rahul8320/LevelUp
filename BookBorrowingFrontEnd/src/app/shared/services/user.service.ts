@@ -7,6 +7,10 @@ import { AuthUser } from '../../core/models/auth-user.model';
 import { JwtService } from './jwt.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { duration } from 'moment';
+import {
+  RegisterRequest,
+  RegisterResponse,
+} from '../../core/models/register.model';
 
 @Injectable({
   providedIn: 'root',
@@ -41,6 +45,13 @@ export class UserService {
   userLogin(loginRequestData: LoginRequest): Observable<LoginResponse> {
     const apiUrl = `${this.apiBaseUrl}/api/authentication/login`;
     return this._httpClient.post<LoginResponse>(apiUrl, loginRequestData);
+  }
+
+  userRegister(
+    registerRequestData: RegisterRequest
+  ): Observable<RegisterResponse> {
+    const apiUrl = `${this.apiBaseUrl}/api/authentication/register`;
+    return this._httpClient.post<RegisterResponse>(apiUrl, registerRequestData);
   }
 
   verifyAuthToken(token: string): Observable<AuthUser> {

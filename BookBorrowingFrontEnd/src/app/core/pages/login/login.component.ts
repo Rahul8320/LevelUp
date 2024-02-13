@@ -86,11 +86,13 @@ export class LoginComponent implements OnDestroy {
                 this._snackbar.open('Login Successfully.', '✅', {
                   duration: 3000,
                 });
+                this.isLoading.set(false);
               },
               error: (err: HttpErrorResponse) => {
                 this._snackbar.open('Something went wrong!', '❌', {
                   duration: 5000,
                 });
+                this.isLoading.set(false);
               },
             });
         },
@@ -105,10 +107,9 @@ export class LoginComponent implements OnDestroy {
               duration: 5000,
             });
           }
+          this.isLoading.set(false);
         },
       });
-
-    this.isLoading.set(false);
   }
 
   ngOnDestroy(): void {

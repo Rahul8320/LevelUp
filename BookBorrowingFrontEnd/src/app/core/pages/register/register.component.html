@@ -1,1 +1,180 @@
-<p>register works!</p>
+<main
+  class="bg-slate-700 max-w-6xl mx-auto my-8 rounded-xl shadow-lg shadow-stone-500 h-[80vh] flex flex-row"
+>
+  <section class="w-1/2 h-full p-3">
+    <div class="p-2 px-7">
+      <!-- headings -->
+      <div class="mt-2 mx-10 text-center">
+        <h2 class="text-4xl text-purple-50 font-medium">Borrowing App</h2>
+        <p class="mt-2 font-medium text-gray-200 mx-5">
+          Start your ride in few clicks. Already have an account?
+          <a
+            [routerLink]="['/login']"
+            class="underline text-blue-100 hover:text-blue-300 mx-1"
+            >Login</a
+          >
+          now.
+        </p>
+      </div>
+      <!-- register form -->
+      <div class="my-2 mx-10">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <!-- name -->
+          <div class="my-2">
+            <label for="name" class="text-white font-medium text-lg"
+              >Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              required
+              formControlName="name"
+              placeholder="Please enter your name"
+              class="w-full rounded-md outline-none my-1 p-2 text-slate-800 font-medium text-lg"
+              [ngClass]="{
+                'border-2 border-red-600 placeholder:text-red-400':
+                  name?.invalid && (name?.dirty || name?.touched)
+              }"
+            />
+            <!-- validator error message -->
+            @if(name?.invalid && (name?.dirty || name?.touched)){
+            @if(name?.errors?.['required']){
+            <div class="text-red-500 font-medium">
+              <p>Name is required!</p>
+            </div>
+            } @if(name?.errors?.['minlength']){
+            <div class="text-red-500 font-medium">
+              <p>Name must be 3 character long!</p>
+            </div>
+            } @if(name?.errors?.['maxlength']){
+            <div class="text-red-500 font-medium">
+              <p>Name cannot be more than 15 character long!</p>
+            </div>
+            } }
+          </div>
+
+          <!-- username -->
+          <div class="my-2">
+            <label for="username" class="text-white font-medium text-lg"
+              >Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              required
+              formControlName="username"
+              placeholder="Please enter your username"
+              class="w-full rounded-md outline-none my-1 p-2 text-slate-800 font-medium text-lg"
+              [ngClass]="{
+                'border-2 border-red-600 placeholder:text-red-400':
+                  username?.invalid && (username?.dirty || username?.touched)
+              }"
+            />
+            <!-- validator error message -->
+            @if(username?.invalid && (username?.dirty || username?.touched)){
+            @if(username?.errors?.['required']){
+            <div class="text-red-500 font-medium">
+              <p>Username is required!</p>
+            </div>
+            } @if(username?.errors?.['minlength']){
+            <div class="text-red-500 font-medium">
+              <p>Username must be 3 character long!</p>
+            </div>
+            } @if(username?.errors?.['maxlength']){
+            <div class="text-red-500 font-medium">
+              <p>Username cannot be more than 15 character long!</p>
+            </div>
+            }}
+          </div>
+
+          <!-- email -->
+          <div class="my-2">
+            <label for="email" class="text-white font-medium text-lg"
+              >Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              required
+              formControlName="email"
+              placeholder="Please enter your email"
+              class="w-full rounded-md outline-none my-1 p-2 text-slate-800 font-medium text-lg"
+              [ngClass]="{
+                'border-2 border-red-600 placeholder:text-red-400':
+                  email?.invalid && (email?.dirty || email?.touched)
+              }"
+            />
+            <!-- validator error message -->
+            @if(email?.invalid && (email?.dirty || email?.touched)){
+            @if(email?.errors?.['required']){
+            <div class="text-red-500 font-medium">
+              <p>Email is required!</p>
+            </div>
+            } @if(email?.errors?.['email']){
+            <div class="text-red-500 font-medium">
+              <p>Email must be valid!</p>
+            </div>
+            } }
+          </div>
+
+          <!-- password -->
+          <div class="my-2">
+            <label for="password" class="text-white">Password </label>
+            <input
+              type="password"
+              id="password"
+              required
+              formControlName="password"
+              placeholder="Please enter your password"
+              class="w-full rounded-md outline-none my-1 p-2 text-slate-800 font-medium text-lg"
+              [ngClass]="{
+                'border-2 border-red-600 placeholder:text-red-400':
+                  password?.invalid && (password?.dirty || password?.touched)
+              }"
+            />
+            <!-- validator error message -->
+            @if(password?.invalid && (password?.dirty || password?.touched)){
+            @if(password?.errors?.['required']){
+            <div class="text-red-500 font-medium">
+              <p>Password is required.</p>
+            </div>
+            } @if(password?.errors?.['minlength']){
+            <div class="text-red-500 font-medium">
+              <p>Password must be 8 character long!</p>
+            </div>
+            } @if(password?.errors?.['maxlength']){
+            <div class="text-red-500 font-medium">
+              <p>Password cannot be more than 20 character long!</p>
+            </div>
+            }}
+          </div>
+        </form>
+        <!-- loading icon -->
+        @if(isLoading()){
+        <app-loading></app-loading>
+        }@else {
+        <!-- login button -->
+        <div class="my-8 w-full">
+          <button
+            type="submit"
+            mat-raised-button
+            color="primary"
+            class="w-full"
+            [disabled]="!registerForm.valid"
+            (click)="onSubmit()"
+          >
+            <span class="text-lg"> Register your account </span>
+          </button>
+        </div>
+        }
+      </div>
+    </div>
+  </section>
+  <section class="w-1/2 h-full">
+    <img
+      src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/authentication/illustration.svg"
+      alt="image of login"
+      class="object-fit w-full h-full my-5"
+    />
+  </section>
+</main>
