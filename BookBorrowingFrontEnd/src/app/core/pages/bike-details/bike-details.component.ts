@@ -10,6 +10,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { BikeRatingDetails } from '../../models/bike-rating.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { duration } from 'moment';
 
 @Component({
   selector: 'app-bike-details',
@@ -35,7 +37,8 @@ export class BikeDetailsComponent implements OnInit, OnDestroy {
 
   constructor(
     private _route: ActivatedRoute,
-    private _bikeService: BikesService
+    private _bikeService: BikesService,
+    private _snackbar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -44,7 +47,9 @@ export class BikeDetailsComponent implements OnInit, OnDestroy {
     });
 
     if (this.bikeId() === '') {
-      alert('Please provide an valid bike id!');
+      this._snackbar.open('Please provide an valid bike id!', 'Ok', {
+        duration: 5000,
+      });
     }
 
     this.getBikeDetailsSubscription = this._bikeService
@@ -54,8 +59,11 @@ export class BikeDetailsComponent implements OnInit, OnDestroy {
           this.bikeDetails.set(res);
         },
         error: (err: HttpErrorResponse) => {
+          this.isLoading.set(false);
           console.error(err);
-          alert('Something went wrong!');
+          this._snackbar.open('Something went wrong!', '❌', {
+            duration: 5000,
+          });
         },
       });
 
@@ -64,14 +72,16 @@ export class BikeDetailsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: BikeRatingDetails) => {
           this.bikeRatingDetails.set(res);
+          this.isLoading.set(false);
         },
         error: (err: HttpErrorResponse) => {
+          this.isLoading.set(false);
           console.error(err);
-          alert('Something went wrong!');
+          this._snackbar.open('Something went wrong!', '❌', {
+            duration: 5000,
+          });
         },
       });
-
-    this.isLoading.set(false);
   }
 
   ngOnDestroy(): void {

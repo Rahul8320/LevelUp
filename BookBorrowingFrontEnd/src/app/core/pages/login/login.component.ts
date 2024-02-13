@@ -62,7 +62,10 @@ export class LoginComponent implements OnDestroy {
 
   onSubmit() {
     if (this.isUsernameInvalid() || this.isPasswordInvalid()) {
-      return alert('Please fill the required field!');
+      this._snackbar.open('Please fill the required field!', 'Ok', {
+        duration: 5000,
+      });
+      return;
     }
     this.isLoading.set(true);
     const loginRequestData: LoginRequest = {

@@ -7,41 +7,55 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-book-details',
   standalone: true,
   imports: [LoadingComponent, DatePipe, MatButtonModule],
   templateUrl: './book-details.component.html',
-  styleUrl: './book-details.component.css'
+  styleUrl: './book-details.component.css',
 })
 export class BookDetailsComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
   bookDetails: Book | undefined;
-  bookId: string = "";
+  bookId: string = '';
   getBookDetailsSubscription: Subscription | undefined;
 
-  constructor(private _bookService: BooksService, private _route: ActivatedRoute) { }
+  constructor(
+    private _bookService: BooksService,
+    private _route: ActivatedRoute,
+    private _snackbar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
     this.isLoading = true;
-    this._route.paramMap.subscribe(params => {
-      this.bookId = params.get('bookId') ?? "";
+    this._route.paramMap.subscribe((params) => {
+      this.bookId = params.get('bookId') ?? '';
     });
 
-    this.getBookDetailsSubscription = this._bookService.getBookDetails(this.bookId).subscribe({
-      next: (res: Book) => {
-        this.bookDetails = res;
-        this.isLoading = false;
-      },
-      error: (err: HttpErrorResponse) => {
-        if (err.status === HttpStatusCode.NotFound) {
-          alert(`Book with id: ${this.bookId} not found.`);
-        } else {
-          alert(err?.message || "Something went wrong!");
-        }
-      }
-    });
+    this.getBookDetailsSubscription = this._bookService
+      .getBookDetails(this.bookId)
+      .subscribe({
+        next: (res: Book) => {
+          this.bookDetails = res;
+          this.isLoading = false;
+        },
+        error: (err: HttpErrorResponse) => {
+          console.error(err);
+          if (err.status === HttpStatusCode.NotFound) {
+            this._snackbar.open(
+              `Book with id: ${this.bookId} not found.`,
+              'Ok',
+              { duration: 5000 }
+            );
+          } else {
+            this._snackbar.open('Something went wrong!', '❌', {
+              duration: 5000,
+            });
+          }
+        },
+      });
     this.isLoading = false;
   }
 

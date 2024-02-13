@@ -6,20 +6,24 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { Subscription } from 'rxjs';
 import { LoadingComponent } from '../../../shared/components/loading/loading.component';
 import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [BookComponent, MatGridListModule, LoadingComponent],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+  styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   availableBooks: Book[] = [];
   isLoading: boolean = false;
   getAllBooksSubscription: Subscription | undefined;
 
-  constructor(private _bookService: BooksService) { }
+  constructor(
+    private _bookService: BooksService,
+    private _snackbar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
     this.isLoading = true;
@@ -29,8 +33,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.isLoading = false;
       },
       error: (err: HttpErrorResponse) => {
-        alert(err?.message || "Something went wrong");
-      }
+        console.error(err);
+        this._snackbar.open('Something went wrong!', '❌', {
+          duration: 5000,
+        });
+      },
     });
     this.isLoading = false;
   }

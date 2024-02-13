@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-bikestore',
@@ -32,7 +33,10 @@ export class BikestoreComponent implements OnInit, OnDestroy {
   model = signal<string | null>(null);
   price = signal<number | null>(null);
 
-  constructor(private _bikeService: BikesService) {}
+  constructor(
+    private _bikeService: BikesService,
+    private _snackbar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
     this.getAvailableBikes();
@@ -45,13 +49,16 @@ export class BikestoreComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: Bike[]) => {
           this.availableBikes.set(res);
+          this.isLoading.set(false);
         },
         error: (err: HttpErrorResponse) => {
           console.error(err);
-          alert('Something went wrong!');
+          this._snackbar.open('Something went wrong!', '❌', {
+            duration: 5000,
+          });
+          this.isLoading.set(false);
         },
       });
-    this.isLoading.set(false);
   }
 
   onMakerChange(event: Event) {
@@ -81,7 +88,6 @@ export class BikestoreComponent implements OnInit, OnDestroy {
   }
 
   onReset() {
-    // this.isButtonEnable.set(false);
     this.maker.set(null);
     this.model.set(null);
     this.price.set(null);
