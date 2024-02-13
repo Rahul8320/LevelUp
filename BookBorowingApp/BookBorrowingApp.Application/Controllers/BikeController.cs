@@ -204,7 +204,7 @@ public class BikeController(IBikeService bikeService) : ControllerBase
     /// <returns>Returns action result</returns>
     /// <exception cref="ApiException">The api exception</exception>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Bike))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<Bike>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorResponse))]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(string))]
@@ -234,6 +234,46 @@ public class BikeController(IBikeService bikeService) : ControllerBase
         }
     }
 
+    [HttpGet]
+    [Route("owner-bikes")]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<Bike>))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorResponse))]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(string))]
+    [Produces(MediaTypeNames.Application.Json)]
+    public async Task<IActionResult> GetOwnerBikes()
+    {
+        try
+        {
+            // fetch owner bikes
+            var response = await _bikeService.GetOwnersAllBikes();
+
+            // check for forbidden response
+            if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                return Forbid(response.ValidationError.Description);
+            }
+
+            // check for success response
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return Ok(response.Data);
+            }
+
+            return StatusCode((int)response.StatusCode);
+        }
+        catch (ApiException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
+    }
+
+
     /// <summary>
     /// Get bike details by it's id.
     /// </summary>
@@ -241,7 +281,7 @@ public class BikeController(IBikeService bikeService) : ControllerBase
     /// <returns>Returns action result.</returns>
     /// <exception cref="ApiException">The api exception.</exception>
     [HttpGet]
-    [Route("{id}")]
+    [Route("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Bike))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFound))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorResponse))]

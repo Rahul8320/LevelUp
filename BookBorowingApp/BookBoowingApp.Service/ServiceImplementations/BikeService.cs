@@ -345,6 +345,45 @@ public class BikeService(IUnitOfWork unitOfWork, IAuthService authService) : IBi
     }
 
     /// <summary>
+    /// Get list of all bikes created by admin.
+    /// </summary>
+    /// <returns>Returns List of bikes</returns>
+    /// <exception cref="ApiException">The api exception.</exception>
+    public async Task<ServiceResult<List<Bike>>> GetOwnersAllBikes()
+    {
+        try
+        {
+            // Fetch current logged in user data
+            var userData = _authService.GetAuthenticatedUserData();
+
+            // Check for admin role
+            if (userData.Role != UserRole.Admin.ToString())
+            {
+                return new ServiceResult<List<Bike>>(HttpStatusCode.Forbidden,
+                new ValidationError(
+                    code: "PermissionDenied",
+                    description: "You don't have any permission to view this data.")
+                );
+            }
+
+            // Fetch all bike data
+            var allBikes = await _unitOfWork.BikeRepository.GetAll();
+            var ownerBikes = allBikes.Where(u => u.Owner == Guid.Parse(userData.UserId!));
+
+            // return user bike data
+            return new ServiceResult<List<Bike>>(HttpStatusCode.OK, ownerBikes.ToList());
+        }
+        catch (ApiException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new ApiException(HttpStatusCode.InternalServerError, ex);
+        }
+    }
+
+    /// <summary>
     /// Update bike availability status.
     /// </summary>
     /// <param name="bike">The bike details.</param>

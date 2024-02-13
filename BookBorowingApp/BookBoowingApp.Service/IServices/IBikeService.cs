@@ -58,6 +58,12 @@ public interface IBikeService
     Task<ServiceResult<Bike>> GetBikeDetails(Guid bikeId);
 
     /// <summary>
+    /// Get list of all bikes created by admin.
+    /// </summary>
+    /// <returns>Returns List of bikes</returns>
+    Task<ServiceResult<List<Bike>>> GetOwnersAllBikes();
+
+    /// <summary>
     /// Search available bike for rent.
     /// </summary>
     /// <param name="maker">The bike maker.</param>
