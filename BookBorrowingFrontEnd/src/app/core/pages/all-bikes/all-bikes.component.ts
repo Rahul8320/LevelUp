@@ -4,18 +4,31 @@ import { BikesService } from '../../../shared/services/bikes.service';
 import { Subscription } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table';
+import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { MatSortModule } from '@angular/material/sort';
 
 @Component({
   selector: 'app-all-bikes',
   standalone: true,
-  imports: [],
+  imports: [MatTableModule, DatePipe, RouterLink, MatSortModule],
   templateUrl: './all-bikes.component.html',
   styleUrl: './all-bikes.component.css',
 })
 export class AllBikesComponent implements OnInit, OnDestroy {
-  adminBikes = signal<Bike[] | null>(null);
+  adminBikes = signal<Bike[]>([]);
   isLoading = signal<boolean>(true);
   getAdminBikesSubscription: Subscription | undefined;
+  displayColumns: string[] = [
+    'coverImage',
+    'maker',
+    'model',
+    'rentalPricePerDay',
+    'isRequestForReturn',
+    'currentBikeStatus',
+    'lastUpdated',
+  ];
 
   constructor(
     private _bikeService: BikesService,
