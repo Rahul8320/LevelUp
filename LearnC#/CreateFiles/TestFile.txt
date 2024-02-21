@@ -1,0 +1,9 @@
+This content is overwrite by write all text method.This text is appended by append all text methodAppend one more line.
+Another one by stream writer.
+I promise this was the last one.
+This text is appended by append all text methodAppend one more line.
+Another one by stream writer.
+I promise this was the last one.
+This text is appended by append all text methodAppend one more line.
+Another one by stream writer.
+I promise this was the last one.
