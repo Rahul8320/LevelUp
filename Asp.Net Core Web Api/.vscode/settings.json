@@ -1,0 +1,7 @@
+{
+    "dotnet.defaultSolution": "DotnetCoreWebApi.sln",
+    "cSpell.words": [
+        "ASPNETCORE",
+        "dotnet"
+    ]
+}
