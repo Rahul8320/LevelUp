@@ -1,6 +1,6 @@
 namespace DuckSimulatorApp.Duck;
 
-public class MallardDuck : IDuck
+public sealed class MallardDuck : IDuck
 {
     public void Fly()
     {

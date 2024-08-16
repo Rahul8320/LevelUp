@@ -1,4 +1,4 @@
-﻿using DuckSimulatorApp.Duck;
+﻿using DuckSimulatorApp;
 
 Console.WriteLine("Welcome to Duck Simulator!");
 Console.WriteLine();

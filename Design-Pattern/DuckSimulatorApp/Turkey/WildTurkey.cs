@@ -1,6 +1,6 @@
 namespace DuckSimulatorApp.Turkey;
 
-public class WildTurkey : ITurkey
+public sealed class WildTurkey : ITurkey
 {
     public void Fly()
     {

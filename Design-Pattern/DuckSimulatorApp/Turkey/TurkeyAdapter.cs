@@ -2,7 +2,7 @@ using DuckSimulatorApp.Duck;
 
 namespace DuckSimulatorApp.Turkey;
 
-public class TurkeyAdapter(ITurkey turkey) : IDuck
+public sealed class TurkeyAdapter(ITurkey turkey) : IDuck
 {
     public void Fly()
     {
