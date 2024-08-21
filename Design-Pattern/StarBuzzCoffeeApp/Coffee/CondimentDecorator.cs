@@ -1,6 +1,7 @@
 namespace StarBuzzCoffeeApp.Coffee;
 
-public abstract class CondimentDecorator : Beverage
+public abstract class CondimentDecorator(Beverage beverage) : Beverage
 {
-    public new abstract string GetDescription();
+    protected Beverage beverage = beverage;
+    public override abstract string GetDescription();
 }

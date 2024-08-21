@@ -1,6 +1,6 @@
 namespace StarBuzzCoffeeApp.Coffee;
 
-public sealed class Whip(Beverage beverage) : CondimentDecorator
+public sealed class Whip(Beverage beverage) : CondimentDecorator(beverage)
 {
     public override double Cost()
     {

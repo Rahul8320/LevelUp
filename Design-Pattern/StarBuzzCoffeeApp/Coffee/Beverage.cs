@@ -2,12 +2,8 @@ namespace StarBuzzCoffeeApp.Coffee;
 
 public abstract class Beverage
 {
-    public string Description = "Unknown Beverage";
 
-    public string GetDescription()
-    {
-        return Description;
-    }
+    public virtual string GetDescription() => "Unknown Beverage";
 
     public abstract double Cost();
 }

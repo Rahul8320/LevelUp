@@ -1,6 +1,6 @@
 namespace StarBuzzCoffeeApp.Coffee;
 
-public sealed class Mocha(Beverage beverage) : CondimentDecorator
+public sealed class Mocha(Beverage beverage) : CondimentDecorator(beverage)
 {
     public override double Cost()
     {
