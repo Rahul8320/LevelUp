@@ -1,5 +1,6 @@
 ﻿using HPlusSport.API.Data;
 using HPlusSport.API.Data.Entity;
+using HPlusSport.API.Extensions;
 using HPlusSport.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,8 @@ public class ProductsController(ShopDbContext context) : ControllerBase
                     .FilterByMinPrice(parameters.MinPrice)
                     .FilterByMaxPrice(parameters.MaxPrice)
                     .SearchByProductName(parameters.Name)
-                    .SearchByProductSku(parameters.Sku);
+                    .SearchByProductSku(parameters.Sku)
+                    .SortBy(parameters.SortBy, parameters.SortOrder);
 
         return await GetPaginatedResponse(products, parameters);
     }
@@ -50,7 +52,8 @@ public class ProductsController(ShopDbContext context) : ControllerBase
                                 .FilterByMinPrice(parameters.MinPrice)
                                 .FilterByMaxPrice(parameters.MaxPrice)
                                 .SearchByProductName(parameters.Name)
-                                .SearchByProductSku(parameters.Sku);
+                                .SearchByProductSku(parameters.Sku)
+                                .SortBy(parameters.SortBy, parameters.SortOrder);
 
         return await GetPaginatedResponse(availableProducts, parameters);
     }

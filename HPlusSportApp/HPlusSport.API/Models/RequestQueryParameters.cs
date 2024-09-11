@@ -21,9 +21,14 @@ public class RequestQueryParameters
         }
     }
 
+    [Range(0.1, double.MaxValue)]
     public decimal? MaxPrice { get; set; }
+    [Range(0.1, double.MaxValue)]
     public decimal? MinPrice { get; set; }
 
     public string Sku { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
+
+    public SortBy SortBy { get; set; } = SortBy.Id;
+    public SortOrder SortOrder { get; set; } = SortOrder.Asc;
 }

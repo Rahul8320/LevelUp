@@ -1,6 +1,7 @@
+using HPlusSport.API.Constants;
 using HPlusSport.API.Data.Entity;
 
-namespace HPlusSport.API.Models;
+namespace HPlusSport.API.Extensions;
 
 public static class ProductExtensions
 {
@@ -47,6 +48,21 @@ public static class ProductExtensions
         if (string.IsNullOrEmpty(productSku) == false)
         {
             products = products.Where(p => p.Sku == productSku);
+        }
+
+        return products;
+    }
+
+    public static IQueryable<Product> SortBy(
+        this IQueryable<Product> products,
+        SortBy sortBy,
+        SortOrder sortOrder)
+    {
+        if (typeof(Product).GetProperty(sortBy.ToString()) is not null)
+        {
+            bool ascending = sortOrder == SortOrder.Asc;
+
+            products = products.OrderByCustom(sortBy.ToString(), ascending);
         }
 
         return products;
