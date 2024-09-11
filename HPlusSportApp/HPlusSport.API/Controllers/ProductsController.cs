@@ -11,9 +11,12 @@ namespace HPlusSport.API.Controllers;
 public class ProductsController(ShopDbContext context) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts()
+    public async Task<ActionResult<PaginatedResponse<Product>>> GetAllProducts(
+        [FromQuery] RequestQueryParameters parameters)
     {
-        return Ok(await context.Products.AsNoTracking().ToArrayAsync());
+        IQueryable<Product> products = context.Products.AsNoTracking();
+
+        return await GetPaginatedResponse(products, parameters);
     }
 
     [HttpGet("{id}")]
@@ -32,9 +35,12 @@ public class ProductsController(ShopDbContext context) : ControllerBase
     }
 
     [HttpGet("available")]
-    public async Task<ActionResult<IEnumerable<Product>>> GetAvailableProducts()
+    public async Task<ActionResult<PaginatedResponse<Product>>> GetAvailableProducts(
+        [FromQuery] RequestQueryParameters parameters)
     {
-        return await context.Products.AsNoTracking().Where(p => p.IsAvailable).ToArrayAsync();
+        IQueryable<Product> availableProducts = context.Products.AsNoTracking().Where(p => p.IsAvailable);
+
+        return await GetPaginatedResponse(availableProducts, parameters);
     }
 
     [HttpPost]
@@ -106,6 +112,7 @@ public class ProductsController(ShopDbContext context) : ControllerBase
     public async Task<ActionResult> DeleteProduct(int id)
     {
         var product = await context.Products.FindAsync(id);
+
         if (product == null)
         {
             return NotFound();
@@ -139,4 +146,34 @@ public class ProductsController(ShopDbContext context) : ControllerBase
 
         return Ok(products);
     }
+
+    private async Task<ActionResult<PaginatedResponse<Product>>> GetPaginatedResponse(
+        IQueryable<Product> products,
+        RequestQueryParameters parameters)
+    {
+        int totalProductsCount = await products.CountAsync();
+        int totalPagesCount = (int)Math.Ceiling((double)totalProductsCount / parameters.PageSize);
+
+        if (parameters.PageNumber > totalPagesCount)
+        {
+            return NotFound();
+        }
+
+        IEnumerable<Product> productResult = await products
+                                                .Skip(parameters.PageSize * (parameters.PageNumber - 1))
+                                                .Take(parameters.PageSize)
+                                                .ToArrayAsync();
+
+        PaginatedResponse<Product> response = new()
+        {
+            PageSize = parameters.PageSize,
+            PageNumber = parameters.PageNumber,
+            TotalItems = totalProductsCount,
+            TotalPages = totalPagesCount,
+            Items = productResult
+        };
+
+        return Ok(response);
+    }
+
 }
