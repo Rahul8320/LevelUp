@@ -4,35 +4,49 @@ namespace HPlusSport.API.Models;
 
 public static class ProductExtensions
 {
-    public static IQueryable<Product> FilterByPrice(
+    public static IQueryable<Product> FilterByMinPrice(
             this IQueryable<Product> products,
-            RequestQueryParameters parameters)
+            decimal? minPrice)
     {
-        if (parameters.MinPrice is not null)
+        if (minPrice is not null)
         {
-            products = products.Where(p => p.Price >= parameters.MinPrice);
-        }
-
-        if (parameters.MaxPrice is not null)
-        {
-            products = products.Where(p => p.Price <= parameters.MaxPrice);
+            products = products.Where(p => p.Price >= minPrice);
         }
 
         return products;
     }
 
-    public static IQueryable<Product> SearchByNameAndSKU(
-        this IQueryable<Product> products,
-        RequestQueryParameters parameters)
+    public static IQueryable<Product> FilterByMaxPrice(
+            this IQueryable<Product> products,
+            decimal? maxPrice)
     {
-        if (string.IsNullOrEmpty(parameters.Sku) == false)
+        if (maxPrice is not null)
         {
-            products = products.Where(p => p.Sku == parameters.Sku);
+            products = products.Where(p => p.Price <= maxPrice);
         }
 
-        if (string.IsNullOrEmpty(parameters.Name) == false)
+        return products;
+    }
+
+    public static IQueryable<Product> SearchByProductName(
+        this IQueryable<Product> products,
+        string productName)
+    {
+        if (string.IsNullOrEmpty(productName) == false)
         {
-            products = products.Where(p => p.Name.ToLower().Contains(parameters.Name.ToLower()));
+            products = products.Where(p => p.Name.ToLower().Contains(productName.ToLower()));
+        }
+
+        return products;
+    }
+
+    public static IQueryable<Product> SearchByProductSku(
+        this IQueryable<Product> products,
+        string productSku)
+    {
+        if (string.IsNullOrEmpty(productSku) == false)
+        {
+            products = products.Where(p => p.Sku == productSku);
         }
 
         return products;
