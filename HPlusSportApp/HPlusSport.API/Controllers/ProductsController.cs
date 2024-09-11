@@ -1,4 +1,5 @@
-﻿using HPlusSport.API.Models;
+﻿using HPlusSport.API.Data;
+using HPlusSport.API.Data.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,9 +10,9 @@ namespace HPlusSport.API.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly ShopContext _context;
+        private readonly ShopDbContext _context;
 
-        public ProductsController(ShopContext context)
+        public ProductsController(ShopDbContext context)
         {
             _context = context;
 
@@ -70,7 +71,8 @@ namespace HPlusSport.API.Controllers
 
             _context.Entry(product).State = EntityState.Modified;
 
-            try {
+            try
+            {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -78,7 +80,8 @@ namespace HPlusSport.API.Controllers
                 if (!_context.Products.Any(p => p.Id == id))
                 {
                     return NotFound();
-                } else
+                }
+                else
                 {
                     throw;
                 }
@@ -103,7 +106,7 @@ namespace HPlusSport.API.Controllers
         }
 
         [HttpPost("Delete")]
-        public async Task<ActionResult> DeleteMultiple([FromQuery]int[] ids)
+        public async Task<ActionResult> DeleteMultiple([FromQuery] int[] ids)
         {
             var products = new List<Product>();
             foreach (var id in ids)

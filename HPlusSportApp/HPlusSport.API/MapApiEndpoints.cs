@@ -1,4 +1,5 @@
-using HPlusSport.API.Models;
+using HPlusSport.API.Data;
+using HPlusSport.API.Data.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,12 +11,12 @@ public static class MapApiEndpoints
 
     public static IEndpointRouteBuilder MapEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/products", async (ShopContext _context) =>
+        app.MapGet("/products", async (ShopDbContext _context) =>
         {
             return await _context.Products.ToArrayAsync();
         }).WithTags(ProductsTag);
 
-        app.MapGet("/products/{id}", async (int id, ShopContext _context) =>
+        app.MapGet("/products/{id}", async (int id, ShopDbContext _context) =>
         {
             var product = await _context.Products.FindAsync(id);
             if (product == null)
@@ -25,11 +26,11 @@ public static class MapApiEndpoints
             return Results.Ok(product);
         }).WithTags(ProductsTag).WithName("GetProduct");
 
-        app.MapGet("/products/available", async (ShopContext _context) =>
+        app.MapGet("/products/available", async (ShopDbContext _context) =>
             Results.Ok(await _context.Products.Where(p => p.IsAvailable).ToArrayAsync())
         ).WithTags(ProductsTag);
 
-        app.MapPost("/products", async (ShopContext _context, Product product) =>
+        app.MapPost("/products", async (ShopDbContext _context, Product product) =>
         {
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
@@ -40,7 +41,7 @@ public static class MapApiEndpoints
                 product);
         }).WithTags(ProductsTag);
 
-        app.MapPut("/products/{id}", async (ShopContext _context, int id, Product product) =>
+        app.MapPut("/products/{id}", async (ShopDbContext _context, int id, Product product) =>
         {
             if (id != product.Id)
             {
@@ -68,7 +69,7 @@ public static class MapApiEndpoints
             return Results.NoContent();
         }).WithTags(ProductsTag);
 
-        app.MapDelete("/products/{id}", async (ShopContext _context, int id) =>
+        app.MapDelete("/products/{id}", async (ShopDbContext _context, int id) =>
         {
             var product = await _context.Products.FindAsync(id);
             if (product == null)
@@ -82,7 +83,7 @@ public static class MapApiEndpoints
             return Results.Ok(product);
         }).WithTags(ProductsTag);
 
-        app.MapPost("/products/Delete", async (ShopContext _context, [FromQuery] int[] ids) =>
+        app.MapPost("/products/Delete", async (ShopDbContext _context, [FromQuery] int[] ids) =>
         {
             var products = new List<Product>();
             foreach (var id in ids)
