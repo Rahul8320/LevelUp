@@ -10,6 +10,7 @@ public class RequestQueryParameters
 
     [Range(1, int.MaxValue)]
     public int PageNumber { get; set; } = PaginatedResponseConstants.DefaultPageNumber;
+
     [Range(1, _maxPageSize)]
     public int PageSize
     {
@@ -19,4 +20,7 @@ public class RequestQueryParameters
             _pageSize = Math.Min(_maxPageSize, value);
         }
     }
+
+    public decimal? MaxPrice { get; set; }
+    public decimal? MinPrice { get; set; }
 }

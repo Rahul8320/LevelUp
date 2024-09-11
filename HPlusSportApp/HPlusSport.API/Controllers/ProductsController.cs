@@ -16,6 +16,8 @@ public class ProductsController(ShopDbContext context) : ControllerBase
     {
         IQueryable<Product> products = context.Products.AsNoTracking();
 
+        products = FilterByPrice(products, parameters);
+
         return await GetPaginatedResponse(products, parameters);
     }
 
@@ -39,6 +41,8 @@ public class ProductsController(ShopDbContext context) : ControllerBase
         [FromQuery] RequestQueryParameters parameters)
     {
         IQueryable<Product> availableProducts = context.Products.AsNoTracking().Where(p => p.IsAvailable);
+
+        availableProducts = FilterByPrice(availableProducts, parameters);
 
         return await GetPaginatedResponse(availableProducts, parameters);
     }
@@ -176,4 +180,20 @@ public class ProductsController(ShopDbContext context) : ControllerBase
         return Ok(response);
     }
 
+    private static IQueryable<Product> FilterByPrice(
+        IQueryable<Product> products,
+        RequestQueryParameters parameters)
+    {
+        if (parameters.MinPrice is not null)
+        {
+            products = products.Where(p => p.Price >= parameters.MinPrice);
+        }
+
+        if (parameters.MaxPrice is not null)
+        {
+            products = products.Where(p => p.Price <= parameters.MaxPrice);
+        }
+
+        return products;
+    }
 }
