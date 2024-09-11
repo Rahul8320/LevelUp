@@ -1,5 +1,5 @@
 using HPlusSport.API;
-using HPlusSport.API.Models;
+using HPlusSport.API.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,9 +15,9 @@ builder.Services.AddControllers()/*
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ShopContext>(options =>
+builder.Services.AddDbContext<ShopDbContext>(options =>
 {
-    options.UseInMemoryDatabase("Shop");
+    options.UseSqlite(builder.Configuration.GetConnectionString("ShopDb")!);
 });
 
 var app = builder.Build();
@@ -34,12 +34,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ShopContext>();
-    await db.Database.EnsureCreatedAsync();
-}
 
 app.MapEndpoints();
 
