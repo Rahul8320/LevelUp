@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using HPlusSport.API.Data;
 using HPlusSport.API.Data.Entity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,18 @@ public static class MapApiEndpoints
 
     public static IEndpointRouteBuilder MapEndpoints(this IEndpointRouteBuilder app)
     {
+        var apiVersionSet = app.NewApiVersionSet()
+                                            .HasApiVersion(new ApiVersion(1, 0))
+                                            .ReportApiVersions()
+                                            .Build();
+
         app.MapGet("/products", async (ShopDbContext _context) =>
         {
             return await _context.Products.ToArrayAsync();
-        }).WithTags(ProductsTag);
+        })
+            .WithTags(ProductsTag)
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(new ApiVersion(1, 0));
 
         app.MapGet("/products/{id}", async (int id, ShopDbContext _context) =>
         {
@@ -24,11 +33,18 @@ public static class MapApiEndpoints
                 return Results.NotFound();
             }
             return Results.Ok(product);
-        }).WithTags(ProductsTag).WithName("GetProduct");
+        })
+            .WithName("GetProduct")
+            .WithTags(ProductsTag)
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(new ApiVersion(1, 0)); ;
 
         app.MapGet("/products/available", async (ShopDbContext _context) =>
             Results.Ok(await _context.Products.Where(p => p.IsAvailable).ToArrayAsync())
-        ).WithTags(ProductsTag);
+        )
+            .WithTags(ProductsTag)
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(new ApiVersion(1, 0));
 
         app.MapPost("/products", async (ShopDbContext _context, Product product) =>
         {
@@ -39,7 +55,10 @@ public static class MapApiEndpoints
                 "GetProduct",
                 new { id = product.Id },
                 product);
-        }).WithTags(ProductsTag);
+        })
+            .WithTags(ProductsTag)
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(new ApiVersion(1, 0));
 
         app.MapPut("/products/{id}", async (ShopDbContext _context, int id, Product product) =>
         {
@@ -67,7 +86,10 @@ public static class MapApiEndpoints
             }
 
             return Results.NoContent();
-        }).WithTags(ProductsTag);
+        })
+            .WithTags(ProductsTag)
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(new ApiVersion(1, 0));
 
         app.MapDelete("/products/{id}", async (ShopDbContext _context, int id) =>
         {
@@ -81,7 +103,10 @@ public static class MapApiEndpoints
             await _context.SaveChangesAsync();
 
             return Results.Ok(product);
-        }).WithTags(ProductsTag);
+        })
+            .WithTags(ProductsTag)
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(new ApiVersion(1, 0));
 
         app.MapPost("/products/Delete", async (ShopDbContext _context, [FromQuery] int[] ids) =>
         {
@@ -102,7 +127,10 @@ public static class MapApiEndpoints
             await _context.SaveChangesAsync();
 
             return Results.Ok(products);
-        }).WithTags(ProductsTag);
+        })
+            .WithTags(ProductsTag)
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(new ApiVersion(1, 0));
 
         return app;
     }
