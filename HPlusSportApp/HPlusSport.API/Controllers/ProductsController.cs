@@ -1,4 +1,5 @@
-﻿using HPlusSport.API.Data;
+﻿using Asp.Versioning;
+using HPlusSport.API.Data;
 using HPlusSport.API.Data.Entity;
 using HPlusSport.API.Extensions;
 using HPlusSport.API.Models;
@@ -7,9 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HPlusSport.API.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
-public class ProductsController(ShopDbContext context) : ControllerBase
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/products")]
+public class ProductsV1Controller(ShopDbContext context) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<PaginatedResponse<Product>>> GetAllProducts(

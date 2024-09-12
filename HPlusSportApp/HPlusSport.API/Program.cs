@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using HPlusSport.API;
 using HPlusSport.API.Data;
 using Microsoft.EntityFrameworkCore;
@@ -5,6 +6,16 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+}).AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
 
 builder.Services.AddControllers()/*
     .ConfigureApiBehaviorOptions(options =>
