@@ -29,6 +29,21 @@ public static class ProductExtensions
         return products;
     }
 
+    public static IQueryable<Product> AdvanceSearch(
+        this IQueryable<Product> products,
+        string searchTerm)
+    {
+        if (string.IsNullOrEmpty(searchTerm) == false)
+        {
+            products = products
+                .Where(p => p.Sku.ToLower().Contains(searchTerm.ToLower()) ||
+                                   p.Name.ToLower().Contains(searchTerm.ToLower()) ||
+                                   p.Description.ToLower().Contains(searchTerm.ToLower()));
+        }
+
+        return products;
+    }
+
     public static IQueryable<Product> SearchByProductName(
         this IQueryable<Product> products,
         string productName)

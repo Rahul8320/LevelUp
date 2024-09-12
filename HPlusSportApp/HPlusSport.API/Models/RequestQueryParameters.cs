@@ -31,4 +31,6 @@ public class RequestQueryParameters
 
     public SortBy SortBy { get; set; } = SortBy.Id;
     public SortOrder SortOrder { get; set; } = SortOrder.Asc;
+
+    public string SearchTerm { get; set; } = string.Empty;
 }

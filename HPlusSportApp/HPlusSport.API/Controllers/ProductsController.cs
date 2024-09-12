@@ -20,6 +20,7 @@ public class ProductsController(ShopDbContext context) : ControllerBase
         products = products
                     .FilterByMinPrice(parameters.MinPrice)
                     .FilterByMaxPrice(parameters.MaxPrice)
+                    .AdvanceSearch(parameters.SearchTerm)
                     .SearchByProductName(parameters.Name)
                     .SearchByProductSku(parameters.Sku)
                     .SortBy(parameters.SortBy, parameters.SortOrder);
@@ -51,6 +52,7 @@ public class ProductsController(ShopDbContext context) : ControllerBase
         availableProducts = availableProducts
                                 .FilterByMinPrice(parameters.MinPrice)
                                 .FilterByMaxPrice(parameters.MaxPrice)
+                                .AdvanceSearch(parameters.SearchTerm)
                                 .SearchByProductName(parameters.Name)
                                 .SearchByProductSku(parameters.Sku)
                                 .SortBy(parameters.SortBy, parameters.SortOrder);
