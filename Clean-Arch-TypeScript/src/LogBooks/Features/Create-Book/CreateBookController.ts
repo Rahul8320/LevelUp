@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
 import { CreateBookRequest, ICreateBookRequest } from "./CreateBookRequest";
 import { IUseCase } from "../../../Shared/IUseCase";
-import {
-  CreateBookValidationErrorResponse,
-  ICreateBookResponse,
-} from "./CreateBookResponse";
+import { CreateBookResponse, ICreateBookResponse } from "./CreateBookResponse";
 
 export class CreateBookController {
   constructor(
@@ -18,7 +15,7 @@ export class CreateBookController {
     const validateResults = this.validate(createBookRequest);
 
     if (validateResults.length > 0) {
-      const response = new CreateBookValidationErrorResponse(validateResults);
+      const response = CreateBookResponse.ValidationErrors(validateResults);
       return res.status(response.statusCode).json(response);
     }
 
