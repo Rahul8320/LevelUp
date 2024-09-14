@@ -1,9 +1,9 @@
-import { IValueObject } from "../../Shared/IValueObject";
+import { IValueObject } from "../../../Shared/IValueObject";
 
 export class LogBookName implements IValueObject<string> {
   private constructor(private readonly _value: string) {}
 
-  public create(value?: string | undefined): IValueObject<string> {
+  public static create(value?: string | undefined): LogBookName {
     if (value === undefined || value === null || value.length === 0) {
       throw new Error("Name can not be empty");
     }

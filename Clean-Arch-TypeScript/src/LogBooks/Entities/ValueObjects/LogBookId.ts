@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { IValueObject } from "../../Shared/IValueObject";
+import { IValueObject } from "../../../Shared/IValueObject";
 
 export class LogBookId implements IValueObject<string> {
   private constructor(private readonly _value: string) {}
