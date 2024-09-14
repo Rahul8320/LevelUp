@@ -10,32 +10,46 @@ type ICreateBookResponseData = {
 };
 
 export class CreateBookResponse implements ICreateBookResponse {
-  public constructor(
-    public readonly statusCode: number,
-    public readonly message: string
-  ) {}
-}
-
-export class CreateBookSuccessResponse implements ICreateBookResponse {
   public statusCode: number;
   public message: string;
   public data?: ICreateBookResponseData | null;
+  public errors?: string[] | null;
 
-  public constructor(bookId: string) {
-    this.statusCode = 201;
-    this.message = "Log Book created successfully.";
-    this.data = {
+  private constructor(
+    statusCode: number,
+    message: string,
+    data?: ICreateBookResponseData | null,
+    errors?: string[] | null
+  ) {
+    this.statusCode = statusCode;
+    this.message = message;
+    this.data = data;
+    this.errors = errors;
+  }
+
+  public static Success(bookId: string) {
+    const data = {
       id: bookId,
     };
+
+    return new CreateBookResponse(201, "Book created successfully.", data);
   }
-}
 
-export class CreateBookValidationErrorResponse implements ICreateBookResponse {
-  public statusCode: number;
-  public message: string;
+  public static ValidationErrors(errors: string[]): CreateBookResponse {
+    return new CreateBookResponse(400, "Validation failed!", null, errors);
+  }
 
-  public constructor(public readonly errors: string[]) {
-    this.statusCode = 400;
-    this.message = "Validation Failed!";
+  public static AlreadyExists(name: string): CreateBookResponse {
+    return new CreateBookResponse(
+      400,
+      `Book with name: '${name}' already exists!`
+    );
+  }
+
+  public static ServerError(errorMessage?: string): CreateBookResponse {
+    return new CreateBookResponse(
+      500,
+      errorMessage ?? "An unknown error occurred!"
+    );
   }
 }

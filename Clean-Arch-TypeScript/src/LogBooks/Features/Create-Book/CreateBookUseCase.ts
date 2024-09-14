@@ -3,11 +3,7 @@ import { LogBook } from "../../Entities/LogBook";
 import { LogBookName } from "../../Entities/ValueObjects/LogBookName";
 import { ILogBookRepository } from "../../Infrastructures/ILogBookRepository";
 import { ICreateBookRequest } from "./CreateBookRequest";
-import {
-  CreateBookResponse,
-  CreateBookSuccessResponse,
-  ICreateBookResponse,
-} from "./CreateBookResponse";
+import { CreateBookResponse, ICreateBookResponse } from "./CreateBookResponse";
 
 export class CreateBookUseCase
   implements IUseCase<ICreateBookRequest, ICreateBookResponse>
@@ -21,10 +17,7 @@ export class CreateBookUseCase
       var isBookExists = await this._bookRepository.isBookExists(request.name);
 
       if (isBookExists) {
-        return new CreateBookResponse(
-          400,
-          `Book with name: '${request.name}' already exists!`
-        );
+        return CreateBookResponse.AlreadyExists(request.name);
       }
 
       let logBook = new LogBook(
@@ -35,15 +28,12 @@ export class CreateBookUseCase
       let result = await this._bookRepository.save(logBook);
 
       if (result === false) {
-        return new CreateBookResponse(500, `Failed to create log book!!`);
+        return CreateBookResponse.ServerError(`Failed to create log book!!`);
       }
 
-      return new CreateBookSuccessResponse(logBook.id.getValue());
+      return CreateBookResponse.Success(logBook.id.getValue());
     } catch (err: any) {
-      return new CreateBookResponse(
-        500,
-        err.message ?? "Error: Create book use case failed!"
-      );
+      return CreateBookResponse.ServerError(err.message);
     }
   }
 }
