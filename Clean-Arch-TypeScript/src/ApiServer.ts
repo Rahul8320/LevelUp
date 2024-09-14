@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import { router as bookRouter } from "./LogBooks/Routes";
 
 export class ApiServer {
   public static run(port: number): void {
@@ -13,6 +14,8 @@ export class ApiServer {
         timestamp: new Date().toLocaleString(),
       });
     });
+
+    app.use("/api/books", bookRouter);
 
     app.listen(port, () => {
       console.log(`Server is running at port ${port}`);
