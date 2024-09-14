@@ -1,4 +1,5 @@
 import { IUseCase } from "../../../Shared/IUseCase";
+import logger from "../../../Shared/Logger";
 import { ILogBookRepository } from "../../Infrastructures/ILogBookRepository";
 import { IGetBookRequest } from "./GetBookRequest";
 import { GetBookResponse, IGetBookResponse } from "./GetBookResponse";
@@ -18,6 +19,7 @@ export class GetBookUseCase
 
       return GetBookResponse.Success(book);
     } catch (err: any) {
+      logger.error(err.message, err);
       return GetBookResponse.ServerError(err.message);
     }
   }
