@@ -46,7 +46,7 @@ export class GetBookResponse implements IGetBookResponse {
   }
 
   public static NotFound(bookId: string): GetBookResponse {
-    return new GetBookResponse(404, `Book with id ${bookId} was not found!`);
+    return new GetBookResponse(404, `Book with id '${bookId}' was not found!`);
   }
 
   public static ServerError(errorMessage?: string): GetBookResponse {
