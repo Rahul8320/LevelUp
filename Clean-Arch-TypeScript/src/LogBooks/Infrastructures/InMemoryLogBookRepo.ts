@@ -45,20 +45,4 @@ export class InMemoryLogBookRepository implements ILogBookRepository {
       LogBookId.create(book.id)
     );
   }
-
-  public async findByName(name: LogBookName): Promise<LogBook | null> {
-    const book = this._books.find(
-      (b) => b.name.toLowerCase() === name.getValue().toLowerCase()
-    );
-
-    if (book === undefined) {
-      return null;
-    }
-
-    return new LogBook(
-      LogBookName.create(book.name),
-      book.userId,
-      LogBookId.create(book.id)
-    );
-  }
 }
